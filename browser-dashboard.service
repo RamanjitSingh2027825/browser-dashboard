@@ -1,0 +1,12 @@
+[Unit]
+Description=Browser Dashboard local server
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ramanjit-singh/Ramanjit-Singh-Drive/ipns/projects/browser-dashboard
+ExecStart=/home/ramanjit-singh/Ramanjit-Singh-Drive/ipns/projects/browser-dashboard/start-dashboard-server.sh
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
