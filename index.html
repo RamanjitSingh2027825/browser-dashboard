@@ -484,6 +484,26 @@
         .clip-actions #clip-saved-toggle {
             color: rgba(255,255,255,0.78); background: rgba(255,255,255,0.045);
         }
+        .clip-thought-bar {
+            display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 10px;
+            padding: 8px; background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+        }
+        .clip-thought-input {
+            min-width: 0; height: 34px; background: rgba(0,0,0,0.26); color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0 11px;
+            outline: none; font-size: 0.84rem;
+        }
+        .clip-thought-input:focus {
+            border-color: color-mix(in srgb, var(--app-accent) 58%, rgba(255,255,255,0.12));
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 18%, transparent);
+        }
+        .clip-thought-save {
+            height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.055); color: rgba(255,255,255,0.88);
+            padding: 0 12px; font-size: 0.78rem; font-weight: 750; cursor: pointer;
+        }
+        .clip-thought-save:hover { background: rgba(255,255,255,0.1); }
         .clip-saved-panel {
             margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;
         }
@@ -491,6 +511,12 @@
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
             color: var(--text-muted); font-size: 0.78rem; font-weight: 700; margin-bottom: 8px;
         }
+        .clip-library-search {
+            width: 100%; height: 34px; margin-bottom: 9px; background: rgba(0,0,0,0.24);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--text-main);
+            padding: 0 11px; outline: none; font-size: 0.84rem;
+        }
+        .clip-library-search:focus { border-color: color-mix(in srgb, var(--app-accent) 52%, rgba(255,255,255,0.12)); }
         .clip-saved-list { display: grid; gap: 8px; max-height: 230px; overflow-y: auto; padding-right: 4px; }
         .clip-saved-list::-webkit-scrollbar { width: 6px; }
         .clip-saved-list::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
@@ -507,6 +533,10 @@
             font-size: 0.86rem; font-weight: 700; margin-bottom: 3px;
         }
         .clip-saved-sub { display: block; color: var(--text-muted); font-size: 0.74rem; }
+        .clip-saved-note {
+            display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            color: rgba(255,255,255,0.72); font-size: 0.77rem; margin-top: 4px;
+        }
         .clip-saved-delete {
             background: rgba(0,0,0,0.24); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.09);
             border-radius: 8px; cursor: pointer; font-size: 1.1rem;
@@ -522,6 +552,7 @@
             .clip-actions .pomodoro-btn { flex: 1; }
             .clip-actions #clip-like,
             .clip-actions #clip-reload { flex: 0 0 38px; width: 38px; }
+            .clip-thought-bar { grid-template-columns: 1fr; }
         }
 
         /* Math Challenger */
@@ -1235,10 +1266,15 @@
             </div>
             <div class="clip-saved-panel" id="clip-saved-panel" hidden>
                 <div class="clip-saved-head">
-                    <span>Saved Clips</span>
+                    <span>Clip Library</span>
                     <span id="clip-saved-count">0</span>
                 </div>
+                <input class="clip-library-search" id="clip-library-search" type="text" placeholder="Search words, thoughts, or videos...">
                 <div class="clip-saved-list" id="clip-saved-list"></div>
+            </div>
+            <div class="clip-thought-bar">
+                <input class="clip-thought-input" id="clip-thought-input" type="text" placeholder="Word or thought..." autocomplete="off">
+                <button class="clip-thought-save" id="clip-thought-save" type="button">Save</button>
             </div>
         </div>
     </div>
@@ -2331,6 +2367,16 @@
             return Array.isArray(clipState.liked) ? clipState.liked : [];
         }
 
+        function getClipNotes() {
+            return clipState.notes && typeof clipState.notes === 'object' && !Array.isArray(clipState.notes)
+                ? clipState.notes
+                : {};
+        }
+
+        function getCurrentClipNote(clip = getCurrentClip()) {
+            return clip?.videoId ? getClipNotes()[clip.videoId]?.note || '' : '';
+        }
+
         function escapeClipText(value) {
             return String(value)
                 .replace(/&/g, '&amp;')
@@ -2398,6 +2444,39 @@
             return Boolean(clip?.videoId && getLikedClips().some(item => item.videoId === clip.videoId));
         }
 
+        function getClipLibraryItems() {
+            const itemsById = new Map();
+            getLikedClips().forEach(clip => {
+                if (!clip?.videoId) return;
+                itemsById.set(clip.videoId, {
+                    ...normalizeClip(clip),
+                    savedAt: clip.savedAt || null,
+                    note: '',
+                    noteUpdatedAt: null,
+                    isLiked: true
+                });
+            });
+
+            Object.values(getClipNotes()).forEach(noteItem => {
+                if (!noteItem?.videoId) return;
+                const existing = itemsById.get(noteItem.videoId) || {};
+                itemsById.set(noteItem.videoId, {
+                    ...normalizeClip({ ...noteItem, ...existing }),
+                    ...existing,
+                    ...noteItem,
+                    note: noteItem.note || '',
+                    noteUpdatedAt: noteItem.updatedAt || null,
+                    isLiked: Boolean(existing.isLiked)
+                });
+            });
+
+            return [...itemsById.values()].sort((a, b) => {
+                const aTime = Date.parse(a.noteUpdatedAt || a.savedAt || 0) || 0;
+                const bTime = Date.parse(b.noteUpdatedAt || b.savedAt || 0) || 0;
+                return bTime - aTime;
+            });
+        }
+
         function toggleClipLike() {
             const clip = getCurrentClip();
             if (!clip?.videoId) return;
@@ -2417,8 +2496,36 @@
             renderSavedClips();
         }
 
+        function saveClipThought() {
+            const input = document.getElementById('clip-thought-input');
+            const thought = input.value.trim();
+            const clip = getCurrentClip();
+            if (!thought || !clip?.videoId) return;
+
+            const notes = { ...getClipNotes() };
+            const previous = notes[clip.videoId]?.note || '';
+            notes[clip.videoId] = {
+                ...normalizeClip(clip),
+                note: previous ? `${previous}\n${thought}` : thought,
+                updatedAt: new Date().toISOString()
+            };
+            clipState.notes = notes;
+            input.value = '';
+            saveClipState();
+            document.getElementById('clip-load-status').textContent = 'Thought saved.';
+            renderClipThoughtState();
+            renderClipLikeState();
+            renderSavedClips();
+        }
+
+        function renderClipThoughtState() {
+            const input = document.getElementById('clip-thought-input');
+            if (!input) return;
+            input.placeholder = getCurrentClipNote() ? 'Add another word or thought...' : 'Word or thought...';
+        }
+
         function renderClipLikeState() {
-            const liked = getLikedClips();
+            const library = getClipLibraryItems();
             const likeButton = document.getElementById('clip-like');
             const savedButton = document.getElementById('clip-saved-toggle');
             const count = document.getElementById('clip-saved-count');
@@ -2428,8 +2535,8 @@
                 likeButton.title = likedNow ? 'Remove from saved' : 'Save clip';
                 likeButton.classList.toggle('is-liked', likedNow);
             }
-            if (savedButton) savedButton.textContent = `Saved (${liked.length})`;
-            if (count) count.textContent = `${liked.length} saved`;
+            if (savedButton) savedButton.textContent = `Library (${library.length})`;
+            if (count) count.textContent = `${library.length} items`;
         }
 
         function renderSavedClips() {
@@ -2438,20 +2545,37 @@
             if (!panel || !list) return;
             panel.hidden = !clipState.showSaved;
             renderClipLikeState();
+            renderClipThoughtState();
             if (!clipState.showSaved) return;
 
-            const liked = getLikedClips();
-            list.innerHTML = liked.length
-                ? liked.map(clip => `
+            const searchInput = document.getElementById('clip-library-search');
+            if (searchInput && document.activeElement !== searchInput) {
+                searchInput.value = clipState.librarySearch || '';
+            }
+            const query = (clipState.librarySearch || '').toLowerCase().trim();
+            const items = getClipLibraryItems().filter(clip => {
+                if (!query) return true;
+                return [
+                    clip.title,
+                    clip.source,
+                    clip.category,
+                    clip.note,
+                    ...(clip.tags || [])
+                ].join(' ').toLowerCase().includes(query);
+            });
+
+            list.innerHTML = items.length
+                ? items.map(clip => `
                     <div class="clip-saved-item">
                         <button class="clip-saved-main" type="button" data-saved-clip="${escapeClipText(clip.videoId)}">
                             <span class="clip-saved-title">${escapeClipText(clip.title)}</span>
-                            <span class="clip-saved-sub">${escapeClipText(clip.category || 'Clip')} · ${escapeClipText(clip.source || 'YouTube')}</span>
+                            <span class="clip-saved-sub">${clip.isLiked ? 'Saved · ' : ''}${escapeClipText(clip.category || 'Clip')} · ${escapeClipText(clip.source || 'YouTube')}</span>
+                            ${clip.note ? `<span class="clip-saved-note">${escapeClipText(clip.note.split('\n').slice(-1)[0])}</span>` : ''}
                         </button>
                         <button class="clip-saved-delete" type="button" data-delete-saved-clip="${escapeClipText(clip.videoId)}" title="Remove">×</button>
                     </div>
                 `).join('')
-                : '<div class="clip-empty-saved">No saved clips yet.</div>';
+                : `<div class="clip-empty-saved">${query ? 'No matching clips or thoughts.' : 'No clips or thoughts saved yet.'}</div>`;
 
             list.querySelectorAll('[data-saved-clip]').forEach(button => {
                 button.addEventListener('click', () => openSavedClip(button.dataset.savedClip));
@@ -2471,17 +2595,21 @@
         }
 
         function openSavedClip(videoId) {
-            const savedClip = getLikedClips().find(clip => clip.videoId === videoId);
+            const savedClip = getClipLibraryItems().find(clip => clip.videoId === videoId);
             if (!savedClip) return;
             setCurrentClip(savedClip);
-            renderClipOfHour(true, 'Saved clip.');
+            renderClipOfHour(true, savedClip.note ? 'Library clip with thoughts.' : 'Library clip.');
         }
 
         function deleteSavedClip(videoId) {
             clipState.liked = getLikedClips().filter(clip => clip.videoId !== videoId);
+            const notes = { ...getClipNotes() };
+            delete notes[videoId];
+            clipState.notes = notes;
             saveClipState();
             renderSavedClips();
             renderClipLikeState();
+            renderClipThoughtState();
         }
 
         function getClipApiUrl() {
@@ -2593,6 +2721,18 @@
             document.getElementById('clip-close').addEventListener('click', closeClipOfHour);
             document.getElementById('clip-like').addEventListener('click', toggleClipLike);
             document.getElementById('clip-saved-toggle').addEventListener('click', toggleSavedClips);
+            document.getElementById('clip-thought-save').addEventListener('click', saveClipThought);
+            document.getElementById('clip-thought-input').addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    saveClipThought();
+                }
+            });
+            document.getElementById('clip-library-search').addEventListener('input', event => {
+                clipState.librarySearch = event.target.value;
+                saveClipState();
+                renderSavedClips();
+            });
             document.getElementById('clip-refresh').addEventListener('click', pickNewClipOfHour);
             document.getElementById('clip-reload').addEventListener('click', () => {
                 renderClipOfHour(true, 'Reloading current clip...');
@@ -2607,6 +2747,7 @@
 
         setupClipOfHourControls();
         renderClipLikeState();
+        renderClipThoughtState();
 
         // --- MATH CHALLENGER ---
         const MATH_STORAGE_KEY = 'hub_math_challenger';
