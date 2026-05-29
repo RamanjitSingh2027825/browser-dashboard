@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Page</title>
+    <style>
+        :root {
+            --bg: #09090b;
+            --surface: rgba(255, 255, 255, 0.06);
+            --surface-hover: rgba(255, 255, 255, 0.12);
+            --text-main: #fafafa;
+            --text-muted: #a1a1aa;
+            --accent: #ffffff;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .background-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(9,9,11,0.5) 0%, rgba(9,9,11,0.8) 100%);
+            z-index: -1; transition: opacity 0.3s;
+        }
+
+        /* --- HEADER --- */
+        header { padding: 40px 60px 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .time-container h2 { font-size: 1.4rem; font-weight: 400; color: var(--text-muted); margin-bottom: -4px; text-shadow: 0 1px 5px rgba(0,0,0,0.5); }
+        .time-container h1 { font-size: 3rem; font-weight: 300; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .time-container p { color: var(--text-muted); font-size: 1.1rem; margin-top: 4px; text-shadow: 0 1px 5px rgba(0,0,0,0.5); }
+        
+        .header-actions {
+            display: flex; gap: 12px; align-items: center; padding: 8px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+        .btn-icon {
+            background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.1); color: white;
+            width: 44px; height: 44px; border-radius: 10px; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(10px);
+        }
+        .btn-icon:hover { background: var(--surface-hover); transform: translateY(-2px); }
+        .btn-primary {
+            background: var(--text-main); color: var(--bg); border: none; padding: 12px 24px;
+            border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        #start-day-btn {
+            position: relative; display: flex; align-items: center; gap: 10px;
+            min-width: 178px; height: 44px; padding: 0 16px 0 20px; border-radius: 10px;
+            background: rgba(250,250,250,0.94); color: var(--bg); text-align: left;
+            box-shadow: none; border: 1px solid rgba(255,255,255,0.08);
+        }
+        #start-day-btn::before {
+            content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 1px;
+            background: rgba(255,255,255,0.14);
+        }
+        #start-day-btn:hover { opacity: 0.92; transform: translateY(-2px); }
+        .start-play {
+            width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+            background: rgba(9,9,11,0.12); font-size: 0.7rem; flex: 0 0 auto;
+        }
+        .start-copy { display: flex; flex-direction: column; line-height: 1.05; }
+        .start-eyebrow { font-size: 0.68rem; font-weight: 600; opacity: 0.62; }
+        .start-label { font-size: 0.94rem; font-weight: 800; }
+
+        /* --- MAIN LAYOUT --- */
+        main { display: flex; gap: 40px; padding: 20px 60px 50px; flex: 1; min-height: 0; }
+
+        /* --- APPS GRID --- */
+        .apps-section { flex: 2; display: flex; flex-direction: column; }
+        .apps-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 20px;
+            overflow-y: auto; padding-right: 10px;
+        }
+        .apps-grid::-webkit-scrollbar { width: 6px; }
+        .apps-grid::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
+
+        .app-tile {
+            background: var(--surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+            text-decoration: none; color: var(--text-main); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; cursor: grab; user-select: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .app-tile:hover {
+            background: var(--surface-hover); transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.2); box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .app-tile:active { cursor: grabbing; }
+        .app-tile.dragging { opacity: 0.4; transform: scale(0.95); }
+        .app-tile.drag-over { border: 2px dashed rgba(255,255,255,0.6); transform: scale(1.05); }
+
+        .app-icon { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; pointer-events: none; }
+        .app-name {
+            font-size: 0.85rem; font-weight: 500; text-align: center; width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .tile-action-btn {
+            position: absolute; top: -8px; color: var(--bg); border: none; width: 24px; height: 24px;
+            border-radius: 50%; font-size: 14px; cursor: pointer; opacity: 0; transition: opacity 0.2s;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 10;
+        }
+        .delete-btn { right: -8px; background: var(--danger); color: white; }
+        .edit-btn { left: -8px; background: var(--text-main); color: var(--bg); }
+        .app-tile:hover .tile-action-btn { opacity: 1; }
+
+        .add-tile { border: 2px dashed rgba(255,255,255,0.2); background: transparent; cursor: pointer; backdrop-filter: none; box-shadow: none; }
+        .add-tile:hover { border-color: rgba(255,255,255,0.4); background: var(--surface); }
+
+        /* --- SIDEBAR (CHECKLIST) --- */
+        .sidebar-section { flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 320px; }
+        
+        .side-panel {
+            background: var(--surface); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px; padding: 24px; display: flex; flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            flex: 1; min-height: 0;
+        }
+        .side-panel h2 { font-size: 1.2rem; margin-bottom: 20px; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+        /* Workweek progress */
+        .week-panel { flex: 0 0 auto; padding: 20px; gap: 14px; }
+        .week-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+        .week-header h2 { margin-bottom: 4px; }
+        .week-status { color: var(--text-muted); font-size: 0.84rem; }
+        .week-percent {
+            min-width: 52px; text-align: right; font-size: 1.35rem; font-weight: 300;
+            color: var(--text-main); text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .week-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+        .week-day {
+            --fill: 0%;
+            min-width: 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.24); padding: 8px; display: flex; flex-direction: column; gap: 7px;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+        }
+        .week-day.is-today { border-color: rgba(255,255,255,0.34); background: rgba(255,255,255,0.08); box-shadow: 0 0 18px rgba(255,255,255,0.08); }
+        .week-day.is-future { opacity: 0.62; }
+        .week-day-label-row { display: flex; flex-direction: column; gap: 2px; }
+        .week-day-label { font-size: 0.78rem; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+        .week-day-value { font-size: 0.72rem; color: rgba(255,255,255,0.74); }
+        .week-day-bar {
+            height: 46px; border-radius: 7px; overflow: hidden; background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.07); display: flex; align-items: flex-end;
+        }
+        .week-day-fill {
+            width: 100%; height: var(--fill); min-height: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.48));
+            transition: height 0.9s ease;
+        }
+        .week-day.is-complete .week-day-fill { background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.62)); }
+        .week-day.is-today .week-day-fill {
+            background: linear-gradient(180deg, rgba(250,250,250,0.96), rgba(161,161,170,0.72));
+            animation: active-progress-pulse 2.6s ease-in-out infinite;
+        }
+        .week-track {
+            height: 8px; overflow: hidden; border-radius: 999px; background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .week-track-fill {
+            width: var(--week-fill, 0%); height: 100%; border-radius: inherit;
+            background: linear-gradient(90deg, rgba(255,255,255,0.92), rgba(161,161,170,0.82));
+            box-shadow: 0 0 14px rgba(255,255,255,0.18); transition: width 0.9s ease;
+        }
+        @keyframes active-progress-pulse {
+            0%, 100% { opacity: 0.68; }
+            50% { opacity: 1; }
+        }
+
+        /* Checklist */
+        .todo-input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 16px; border-radius: 8px; color: white; font-size: 0.95rem; margin-bottom: 16px; outline: none;
+        }
+        .todo-input:focus { border-color: rgba(255,255,255,0.4); }
+        .todo-list { list-style: none; overflow-y: auto; flex: 1; }
+        .todo-list::-webkit-scrollbar { display: none; }
+        
+        .todo-item { 
+            display: flex; align-items: center; gap: 12px; padding: 10px 8px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; 
+            cursor: grab; transition: background 0.2s, opacity 0.2s; border-radius: 6px;
+        }
+        .todo-item:active { cursor: grabbing; }
+        .todo-item:hover { background: rgba(255,255,255,0.05); }
+        .todo-item.dragging { opacity: 0.4; background: var(--surface-hover); transform: scale(0.98); }
+        .todo-item.drag-over { border-top: 2px dashed rgba(255,255,255,0.4); }
+
+        .todo-item input[type="checkbox"] { accent-color: var(--text-main); width: 18px; height: 18px; cursor: pointer; }
+        .todo-item.completed { opacity: 0.5; }
+        .todo-item.completed span { text-decoration: line-through; }
+        .todo-item.completed:hover { opacity: 0.8; }
+        
+        .todo-text { flex: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none; }
+        .todo-delete { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+        .todo-delete:hover { color: var(--danger); }
+
+        .clear-completed-btn {
+            background: none; border: none; color: var(--text-muted); font-size: 0.85rem;
+            cursor: pointer; margin-top: 16px; text-align: center; transition: color 0.2s;
+            width: 100%; padding: 8px;
+        }
+        .clear-completed-btn:hover { color: var(--text-main); }
+
+        /* Pomodoro */
+        .pomodoro-panel { flex: 1.45; gap: 8px; overflow-y: auto; padding: 20px; }
+        .pomodoro-panel::-webkit-scrollbar { width: 6px; }
+        .pomodoro-panel::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
+        .pomodoro-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .pomodoro-actions { display: flex; gap: 8px; }
+        .pomodoro-header h2 { margin-bottom: 4px; }
+        .pomodoro-cycle { color: var(--text-muted); font-size: 0.85rem; }
+        .pomodoro-icon-btn {
+            background: rgba(0,0,0,0.25); color: var(--text-main); border: 1px solid rgba(255,255,255,0.12);
+            width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .pomodoro-icon-btn:hover { background: var(--surface-hover); }
+        .pomodoro-mode-tabs {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+            background: rgba(0,0,0,0.24); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 4px;
+        }
+        .pomodoro-mode {
+            background: transparent; border: none; color: var(--text-muted); border-radius: 7px;
+            padding: 7px 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;
+        }
+        .pomodoro-mode.active { background: var(--text-main); color: var(--bg); }
+        .pomodoro-progress {
+            --progress: 0;
+            width: min(126px, 48vw); aspect-ratio: 1; border-radius: 50%; margin: 0 auto 4px;
+            background: conic-gradient(var(--text-main) calc(var(--progress) * 1%), rgba(255,255,255,0.12) 0);
+            display: grid; place-items: center; position: relative; box-shadow: inset 0 0 30px rgba(0,0,0,0.25);
+        }
+        .pomodoro-progress::before {
+            content: ""; position: absolute; inset: 9px; border-radius: 50%;
+            background: rgba(9,9,11,0.72); border: 1px solid rgba(255,255,255,0.08);
+        }
+        .pomodoro-time-stack { position: relative; z-index: 1; text-align: center; }
+        .pomodoro-time { display: block; font-size: 1.95rem; font-weight: 300; letter-spacing: 0; line-height: 1; }
+        .pomodoro-mode-label { display: block; color: var(--text-muted); font-size: 0.78rem; margin-top: 6px; }
+        .pomodoro-focus-input {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);
+            padding: 9px 12px; border-radius: 8px; color: white; font-size: 0.9rem; outline: none;
+        }
+        .pomodoro-focus-input:focus { border-color: rgba(255,255,255,0.4); }
+        .pomodoro-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 8px 0;
+        }
+        .pomodoro-stat span { color: var(--text-muted); display: block; font-size: 0.72rem; margin-bottom: 3px; }
+        .pomodoro-stat strong { font-size: 0.95rem; font-weight: 600; }
+        .pomodoro-controls { display: grid; grid-template-columns: 1fr 0.8fr 0.8fr; gap: 8px; }
+        .pomodoro-btn {
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 8px 8px;
+            cursor: pointer; color: var(--text-main); background: rgba(0,0,0,0.25); font-weight: 600;
+        }
+        .pomodoro-btn.primary { background: var(--text-main); color: var(--bg); border-color: transparent; }
+        .pomodoro-btn:hover { transform: translateY(-1px); background: var(--surface-hover); }
+        .pomodoro-btn.primary:hover { background: rgba(255,255,255,0.9); }
+        .pomodoro-options { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .pomodoro-checkbox { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; }
+        .pomodoro-checkbox input { accent-color: var(--text-main); }
+        .pomodoro-settings {
+            display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+        }
+        .pomodoro-setting span { display: block; color: var(--text-muted); font-size: 0.7rem; margin-bottom: 5px; }
+        .pomodoro-setting input {
+            width: 100%; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 8px; color: white; padding: 6px 6px; font-size: 0.86rem; outline: none; text-align: center;
+        }
+        .pomodoro-setting input:focus { border-color: rgba(255,255,255,0.4); }
+
+        .pomodoro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 998; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none; padding: 24px;
+        }
+        .pomodoro-overlay.active { opacity: 1; pointer-events: all; }
+        .pomodoro-overlay .pomodoro-panel {
+            flex: none; width: 420px; max-width: 100%; max-height: calc(100vh - 48px);
+            background: rgba(24, 24, 27, 0.88);
+        }
+
+        .template-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 998; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none; padding: 24px;
+        }
+        .template-overlay.active { opacity: 1; pointer-events: all; }
+        .template-panel {
+            width: 680px; max-width: 100%; max-height: calc(100vh - 48px); overflow-y: auto;
+            background: rgba(24, 24, 27, 0.9); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px; padding: 22px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.55);
+        }
+        .template-panel::-webkit-scrollbar { width: 6px; }
+        .template-panel::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
+        .template-header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+        .template-header h2 { font-size: 1.2rem; font-weight: 500; margin-bottom: 4px; }
+        .template-status { color: var(--text-muted); font-size: 0.82rem; min-height: 1.1em; }
+        .template-tabs {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+            background: rgba(0,0,0,0.24); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 4px; margin-bottom: 14px;
+        }
+        .template-tab {
+            background: transparent; border: none; color: var(--text-muted); border-radius: 7px;
+            padding: 8px 6px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+        }
+        .template-tab.active { background: var(--text-main); color: var(--bg); }
+        .template-toolbar { display: flex; gap: 6px; margin-bottom: 10px; }
+        .template-format-btn {
+            width: 36px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(0,0,0,0.25); color: var(--text-main); cursor: pointer; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .template-format-btn:hover { background: var(--surface-hover); }
+        .template-format-btn.active { background: var(--text-main); color: var(--bg); }
+        .template-preview {
+            background: rgba(255,255,255,0.96); color: #111827; border-radius: 10px;
+            padding: 20px; min-height: 310px; outline: none; line-height: 1.45; font-size: 0.95rem;
+        }
+        .template-preview:focus { box-shadow: 0 0 0 2px rgba(255,255,255,0.45); }
+        .template-preview h3 { margin-bottom: 12px; font-size: 1.15rem; }
+        .template-preview p { margin: 0 0 12px; }
+        .template-preview ul, .template-preview ol { margin: 0 0 12px 22px; padding-left: 18px; }
+        .template-preview ul ul, .template-preview ol ol { margin-bottom: 0; }
+        .template-preview ul ul { list-style-type: circle; }
+        .template-preview ul ul ul { list-style-type: square; }
+        .template-preview ol ol { list-style-type: lower-alpha; }
+        .template-preview ol ol ol { list-style-type: lower-roman; }
+        .template-preview li { margin-bottom: 5px; }
+        .template-preview table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+        .template-preview th, .template-preview td { border: 1px solid #d1d5db; padding: 8px; text-align: left; vertical-align: top; }
+        .template-preview th { background: #f3f4f6; }
+        .template-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+
+        /* --- QUOTE OF THE DAY --- */
+        .quote-container {
+            position: fixed; bottom: 20px; left: 0; right: 0; text-align: center;
+            color: rgba(255,255,255,0.7); font-size: 0.95rem; font-style: italic; 
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8); pointer-events: none; padding: 0 20px;
+            z-index: 10;
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal { background: #18181b; padding: 30px; border-radius: 16px; width: 400px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal h3 { margin-bottom: 20px; }
+        .modal input[type="text"], .modal input[type="url"] {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px; border-radius: 8px; color: white; margin-bottom: 16px; outline: none;
+        }
+        .routine-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; }
+        .routine-toggle input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--text-main); }
+        .routine-toggle:hover { color: var(--text-main); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+        .btn-cancel { background: transparent; color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+
+        /* --- COMMAND BAR OVERLAY --- */
+        .cmd-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 999; display: flex; align-items: flex-start; justify-content: center;
+            padding-top: 15vh; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        .cmd-overlay.active { opacity: 1; pointer-events: all; }
+        .cmd-container {
+            width: 600px; max-width: 90%; background: rgba(24, 24, 27, 0.85);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        #cmd-input {
+            width: 100%; background: transparent; border: none; padding: 20px 24px;
+            color: white; font-size: 1.2rem; outline: none; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        #cmd-input::placeholder { color: var(--text-muted); }
+        .cmd-results { list-style: none; max-height: 400px; overflow-y: auto; margin: 0; padding: 10px; }
+        .cmd-results::-webkit-scrollbar { display: none; }
+        .cmd-result-item {
+            padding: 14px 16px; border-radius: 8px; color: var(--text-muted); cursor: pointer;
+            display: flex; align-items: center; gap: 16px; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
+        .cmd-icon {
+            width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center;
+            justify-content: center; background: rgba(0,0,0,0.5); font-size: 14px; flex-shrink: 0; object-fit: cover;
+        }
+        .cmd-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; }
+        .cmd-badge { font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 12px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-overlay" id="bg-overlay"></div>
+
+    <header>
+        <div class="time-container">
+            <h2 id="greeting">Good Morning,</h2>
+            <h1 id="clock">00:00</h1>
+            <p id="date">Loading date...</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon" onclick="openSettings()" title="Settings & Backup">⚙️</button>
+            <button class="btn-icon" onclick="toggleWallpaper()" title="Toggle Creator Wallpaper">🎨</button>
+            <button class="btn-primary" id="start-day-btn">
+                <span class="start-play">▶</span>
+                <span class="start-copy">
+                    <span class="start-eyebrow">Workspace Ready</span>
+                    <span class="start-label">Start My Day</span>
+                </span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="apps-section">
+            <div class="apps-grid" id="apps-grid"></div>
+        </section>
+
+        <section class="sidebar-section">
+            <div class="side-panel week-panel">
+                <div class="week-header">
+                    <div>
+                        <h2>Workweek Progress</h2>
+                        <p class="week-status" id="week-status">8 AM - 8 PM window</p>
+                    </div>
+                    <div class="week-percent" id="week-percent">0%</div>
+                </div>
+                <div class="week-grid" id="week-grid"></div>
+                <div class="week-track" aria-label="Workweek progress">
+                    <div class="week-track-fill" id="week-track-fill"></div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <h2>Daily Checklist</h2>
+                <input type="text" class="todo-input" id="todo-input" placeholder="Add a task and press Enter...">
+                <ul class="todo-list" id="todo-list"></ul>
+                <button class="clear-completed-btn" onclick="clearCompletedTodos()" id="clear-completed-btn" style="display: none;">Clear Completed</button>
+            </div>
+        </section>
+    </main>
+
+    <div class="quote-container" id="quote-container">Loading daily inspiration...</div>
+
+    <div class="modal-overlay" id="app-modal">
+        <div class="modal">
+            <h3 id="modal-title">Add New App</h3>
+            <input type="text" id="app-name" placeholder="App Name (e.g., ChatGPT)">
+            <input type="url" id="app-url" placeholder="URL (e.g., https://chat.openai.com)">
+            <input type="url" id="app-icon-url" placeholder="Custom Logo URL (Optional)">
+            <label class="routine-toggle">
+                <input type="checkbox" id="app-routine"> Include in "Start My Day" routine
+            </label>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" id="modal-submit-btn" onclick="saveApp()">Add App</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal">
+            <h3>Settings & Backup</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Backup your layout, links, tasks, templates, and timer settings so you never lose them if your browser cache clears.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-primary" onclick="exportData()" style="width: 100%; text-align: center;">Export Layout (JSON)</button>
+                <button class="btn-cancel" onclick="document.getElementById('import-file').click()" style="width: 100%;">Import Layout</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 24px;">
+                <button class="btn-cancel" onclick="closeSettings()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cmd-overlay" id="cmd-overlay">
+        <div class="cmd-container">
+            <input type="text" id="cmd-input" placeholder="Search apps, tasks, or ask..." autocomplete="off">
+            <ul class="cmd-results" id="cmd-results"></ul>
+        </div>
+    </div>
+
+    <div class="pomodoro-overlay" id="pomodoro-overlay">
+        <div class="side-panel pomodoro-panel">
+            <div class="pomodoro-header">
+                <div>
+                    <h2>Pomodoro Timer</h2>
+                    <p class="pomodoro-cycle" id="pomodoro-cycle-label">0 done · long in 4</p>
+                </div>
+                <div class="pomodoro-actions">
+                    <button class="pomodoro-icon-btn" id="pomodoro-sound-toggle" type="button" title="Toggle sound">🔔</button>
+                    <button class="pomodoro-icon-btn" id="pomodoro-close" type="button" title="Close">×</button>
+                </div>
+            </div>
+
+            <div class="pomodoro-mode-tabs" role="tablist" aria-label="Timer mode">
+                <button class="pomodoro-mode active" data-mode="work" type="button">Focus</button>
+                <button class="pomodoro-mode" data-mode="shortBreak" type="button">Short</button>
+                <button class="pomodoro-mode" data-mode="longBreak" type="button">Long</button>
+            </div>
+
+            <div class="pomodoro-progress" id="pomodoro-progress" role="timer" aria-live="polite">
+                <div class="pomodoro-time-stack">
+                    <span class="pomodoro-time" id="pomodoro-time">25:00</span>
+                    <small class="pomodoro-mode-label" id="pomodoro-mode-label">Focus session</small>
+                </div>
+            </div>
+
+            <div class="pomodoro-controls">
+                <button class="pomodoro-btn primary" id="pomodoro-start-pause" type="button">Start</button>
+                <button class="pomodoro-btn" id="pomodoro-reset" type="button">Reset</button>
+                <button class="pomodoro-btn" id="pomodoro-skip" type="button">Skip</button>
+            </div>
+
+            <input type="text" class="pomodoro-focus-input" id="pomodoro-focus-input" placeholder="Focus goal for this session...">
+
+            <div class="pomodoro-stats" aria-label="Pomodoro progress">
+                <div class="pomodoro-stat">
+                    <span>Done</span>
+                    <strong id="pomodoro-session-count">0</strong>
+                </div>
+                <div class="pomodoro-stat">
+                    <span>Next long</span>
+                    <strong id="pomodoro-next-long">4</strong>
+                </div>
+                <div class="pomodoro-stat">
+                    <span>Mode</span>
+                    <strong id="pomodoro-current-mode">Focus</strong>
+                </div>
+            </div>
+
+            <div class="pomodoro-options">
+                <label class="pomodoro-checkbox">
+                    <input type="checkbox" id="pomodoro-auto-start">
+                    <span>Auto-start next</span>
+                </label>
+            </div>
+
+            <div class="pomodoro-settings" aria-label="Pomodoro settings">
+                <label class="pomodoro-setting">
+                    <span>Focus</span>
+                    <input type="number" id="pomodoro-work-min" min="1" max="120" value="25">
+                </label>
+                <label class="pomodoro-setting">
+                    <span>Short</span>
+                    <input type="number" id="pomodoro-short-min" min="1" max="60" value="5">
+                </label>
+                <label class="pomodoro-setting">
+                    <span>Long</span>
+                    <input type="number" id="pomodoro-long-min" min="1" max="90" value="15">
+                </label>
+                <label class="pomodoro-setting">
+                    <span>Cycle</span>
+                    <input type="number" id="pomodoro-cycle-count" min="2" max="12" value="4">
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="template-overlay" id="template-overlay">
+        <div class="template-panel">
+            <div class="template-header">
+                <div>
+                    <h2>Update Templates</h2>
+                    <p class="template-status" id="template-status"></p>
+                </div>
+                <button class="pomodoro-icon-btn" id="template-close" type="button" title="Close">×</button>
+            </div>
+
+            <div class="template-tabs" role="tablist" aria-label="Update template">
+                <button class="template-tab active" data-template="dailyTargets" type="button">Daily Targets</button>
+                <button class="template-tab" data-template="dailyUpdates" type="button">Daily Updates</button>
+                <button class="template-tab" data-template="meetingMinutes" type="button">Meeting Minutes</button>
+            </div>
+
+            <div class="template-toolbar" aria-label="Template formatting">
+                <button class="template-format-btn" id="template-bold" type="button" title="Bold"><strong>B</strong></button>
+                <button class="template-format-btn" id="template-italic" type="button" title="Italic"><em>I</em></button>
+                <button class="template-format-btn" id="template-ul" type="button" title="Bulleted list">•</button>
+                <button class="template-format-btn" id="template-ol" type="button" title="Numbered list">1.</button>
+            </div>
+
+            <div class="template-preview" id="template-preview" contenteditable="true"></div>
+
+            <div class="template-actions">
+                <button class="pomodoro-btn" id="template-save-default" type="button">Save Default</button>
+                <button class="pomodoro-btn" id="template-reset" type="button">Reset to Default</button>
+                <button class="pomodoro-btn primary" id="template-copy" type="button">Copy Rendered</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- WALLPAPER ENGINE ---
+        const WALLPAPER_REFRESH_MS = 5 * 60 * 1000;
+        let wallpaperTimerId = null;
+        let activeWallpaperSeed = '';
+        let useWallpaper = JSON.parse(localStorage.getItem('hub_wallpaper'));
+        if (useWallpaper === null) useWallpaper = true; 
+
+        function getWallpaperSeed() {
+            return Math.floor(Date.now() / WALLPAPER_REFRESH_MS);
+        }
+
+        function applyWallpaper() {
+            const overlay = document.getElementById('bg-overlay');
+            if (useWallpaper) {
+                const wallpaperSeed = `start-page-${getWallpaperSeed()}`;
+                if (wallpaperSeed !== activeWallpaperSeed) {
+                    activeWallpaperSeed = wallpaperSeed;
+                    document.body.style.backgroundImage = `url('https://picsum.photos/seed/${wallpaperSeed}/1920/1080')`;
+                }
+                overlay.style.opacity = '1';
+            } else {
+                activeWallpaperSeed = '';
+                document.body.style.backgroundImage = 'radial-gradient(circle at 50% 0%, #1f1f22 0%, transparent 70%)';
+                overlay.style.opacity = '0';
+            }
+        }
+        function scheduleWallpaperRefresh() {
+            if (wallpaperTimerId) clearTimeout(wallpaperTimerId);
+            wallpaperTimerId = null;
+            if (!useWallpaper) return;
+
+            const timeUntilNextRefresh = WALLPAPER_REFRESH_MS - (Date.now() % WALLPAPER_REFRESH_MS);
+            wallpaperTimerId = setTimeout(() => {
+                applyWallpaper();
+                scheduleWallpaperRefresh();
+            }, timeUntilNextRefresh || WALLPAPER_REFRESH_MS);
+        }
+        function toggleWallpaper() { useWallpaper = !useWallpaper; localStorage.setItem('hub_wallpaper', JSON.stringify(useWallpaper)); applyWallpaper(); scheduleWallpaperRefresh(); }
+        applyWallpaper();
+        scheduleWallpaperRefresh();
+
+        // --- CLOCK & GREETING ---
+        function updateClock() {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // Set Greeting
+            let greeting = 'Good Evening,';
+            if (hour < 12) greeting = 'Good Morning,';
+            else if (hour < 18) greeting = 'Good Afternoon,';
+            document.getElementById('greeting').textContent = greeting;
+
+            // Set Time & Date
+            document.getElementById('clock').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('date').textContent = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // --- WORKWEEK PROGRESS ---
+        const WORK_WEEK_DAYS = [
+            { key: 1, label: 'Mon' },
+            { key: 2, label: 'Tue' },
+            { key: 3, label: 'Wed' },
+            { key: 4, label: 'Thu' },
+            { key: 5, label: 'Fri' }
+        ];
+
+        function clampPercent(value) {
+            return Math.max(0, Math.min(100, value));
+        }
+
+        function getWorkdayProgress(now) {
+            const start = new Date(now);
+            start.setHours(8, 0, 0, 0);
+            const end = new Date(now);
+            end.setHours(20, 0, 0, 0);
+            return clampPercent(((now - start) / (end - start)) * 100);
+        }
+
+        function getWeekdayFill(now, weekdayKey) {
+            const today = now.getDay();
+            if (today === 0 || today === 6) return 100;
+            if (weekdayKey < today) return 100;
+            if (weekdayKey > today) return 0;
+            return getWorkdayProgress(now);
+        }
+
+        function getWeekProgressStatus(now, todayFill) {
+            const today = now.getDay();
+            if (today === 0 || today === 6) return 'Workweek complete';
+            const label = WORK_WEEK_DAYS.find(day => day.key === today)?.label || 'Today';
+            if (now.getHours() < 8) return `${label} starts at 8 AM`;
+            if (now.getHours() >= 20) return `${label} complete`;
+            return `${label} in progress until 8 PM`;
+        }
+
+        function setupWeekProgress() {
+            const grid = document.getElementById('week-grid');
+            grid.innerHTML = WORK_WEEK_DAYS.map(day => `
+                <div class="week-day" data-weekday="${day.key}">
+                    <div class="week-day-label-row">
+                        <span class="week-day-label">${day.label}</span>
+                        <span class="week-day-value">0%</span>
+                    </div>
+                    <div class="week-day-bar">
+                        <div class="week-day-fill"></div>
+                    </div>
+                </div>
+            `).join('');
+            updateWeekProgress();
+            setInterval(updateWeekProgress, 60000);
+        }
+
+        function updateWeekProgress() {
+            const now = new Date();
+            const today = now.getDay();
+            const fills = WORK_WEEK_DAYS.map(day => ({ ...day, fill: getWeekdayFill(now, day.key) }));
+            const totalFill = fills.reduce((sum, day) => sum + day.fill, 0) / fills.length;
+            const todayFill = fills.find(day => day.key === today)?.fill || (today === 0 || today === 6 ? 100 : 0);
+
+            fills.forEach(day => {
+                const tile = document.querySelector(`[data-weekday="${day.key}"]`);
+                if (!tile) return;
+                tile.style.setProperty('--fill', `${day.fill}%`);
+                tile.classList.toggle('is-complete', day.fill >= 100);
+                tile.classList.toggle('is-today', day.key === today && today !== 0 && today !== 6);
+                tile.classList.toggle('is-future', day.fill === 0 && day.key !== today);
+                tile.querySelector('.week-day-value').textContent = `${Math.round(day.fill)}%`;
+            });
+
+            document.getElementById('week-percent').textContent = `${Math.round(totalFill)}%`;
+            document.getElementById('week-status').textContent = getWeekProgressStatus(now, todayFill);
+            document.getElementById('week-track-fill').style.setProperty('--week-fill', `${totalFill}%`);
+        }
+
+        setupWeekProgress();
+
+        // --- QUOTE OF THE DAY ---
+        async function fetchQuote() {
+            try {
+                // Using DummyJSON's free quote API
+                const res = await fetch('https://dummyjson.com/quotes/random');
+                const data = await res.json();
+                document.getElementById('quote-container').textContent = `"${data.quote}" — ${data.author}`;
+            } catch (err) {
+                // Fallback if offline or API is down
+                document.getElementById('quote-container').textContent = '"The secret of getting ahead is getting started." — Mark Twain';
+            }
+        }
+        fetchQuote();
+
+        // --- POMODORO TIMER ---
+        const POMODORO_STORAGE_KEY = 'hub_pomodoro';
+        const POMODORO_DEFAULT_SETTINGS = {
+            workMinutes: 25,
+            shortBreakMinutes: 5,
+            longBreakMinutes: 15,
+            sessionsBeforeLongBreak: 4
+        };
+        const POMODORO_LABELS = {
+            work: 'Focus',
+            shortBreak: 'Short break',
+            longBreak: 'Long break'
+        };
+        const originalDocumentTitle = document.title;
+        let pomodoroIntervalId = null;
+        let pomodoroTargetEndAt = null;
+
+        function clampNumber(value, min, max, fallback) {
+            const parsed = parseInt(value, 10);
+            if (Number.isNaN(parsed)) return fallback;
+            return Math.min(max, Math.max(min, parsed));
+        }
+
+        function normalizePomodoroSettings(settings = {}) {
+            return {
+                workMinutes: clampNumber(settings.workMinutes, 1, 120, POMODORO_DEFAULT_SETTINGS.workMinutes),
+                shortBreakMinutes: clampNumber(settings.shortBreakMinutes, 1, 60, POMODORO_DEFAULT_SETTINGS.shortBreakMinutes),
+                longBreakMinutes: clampNumber(settings.longBreakMinutes, 1, 90, POMODORO_DEFAULT_SETTINGS.longBreakMinutes),
+                sessionsBeforeLongBreak: clampNumber(settings.sessionsBeforeLongBreak, 2, 12, POMODORO_DEFAULT_SETTINGS.sessionsBeforeLongBreak)
+            };
+        }
+
+        function getPomodoroModeSeconds(mode, settings) {
+            const activeSettings = settings || pomodoroState.settings;
+            if (mode === 'shortBreak') return activeSettings.shortBreakMinutes * 60;
+            if (mode === 'longBreak') return activeSettings.longBreakMinutes * 60;
+            return activeSettings.workMinutes * 60;
+        }
+
+        function loadPomodoroState() {
+            let saved = {};
+            try {
+                saved = JSON.parse(localStorage.getItem(POMODORO_STORAGE_KEY)) || {};
+            } catch (err) {
+                saved = {};
+            }
+
+            const settings = normalizePomodoroSettings(saved.settings);
+            const mode = ['work', 'shortBreak', 'longBreak'].includes(saved.mode) ? saved.mode : 'work';
+            const modeSeconds = getPomodoroModeSeconds(mode, settings);
+            const savedRemaining = Number(saved.remainingSeconds);
+            const remainingSeconds = Number.isFinite(savedRemaining) && savedRemaining > 0
+                ? Math.min(savedRemaining, modeSeconds)
+                : modeSeconds;
+
+            return {
+                settings,
+                mode,
+                remainingSeconds,
+                isRunning: false,
+                completedFocusSessions: clampNumber(saved.completedFocusSessions, 0, 999, 0),
+                focusText: typeof saved.focusText === 'string' ? saved.focusText : '',
+                soundOn: saved.soundOn !== false,
+                autoStartNext: Boolean(saved.autoStartNext)
+            };
+        }
+
+        let pomodoroState = loadPomodoroState();
+
+        function getPomodoroBackup() {
+            return {
+                settings: pomodoroState.settings,
+                mode: pomodoroState.mode,
+                remainingSeconds: pomodoroState.remainingSeconds,
+                completedFocusSessions: pomodoroState.completedFocusSessions,
+                focusText: pomodoroState.focusText,
+                soundOn: pomodoroState.soundOn,
+                autoStartNext: pomodoroState.autoStartNext
+            };
+        }
+
+        function savePomodoroState() {
+            localStorage.setItem(POMODORO_STORAGE_KEY, JSON.stringify(getPomodoroBackup()));
+        }
+
+        function formatPomodoroTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const seconds = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
+        function updatePomodoroTitle() {
+            if (pomodoroState.isRunning) {
+                document.title = `${formatPomodoroTime(pomodoroState.remainingSeconds)} - ${POMODORO_LABELS[pomodoroState.mode]}`;
+            } else {
+                document.title = originalDocumentTitle;
+            }
+        }
+
+        function stopPomodoroTicker() {
+            if (pomodoroIntervalId) clearInterval(pomodoroIntervalId);
+            pomodoroIntervalId = null;
+            pomodoroTargetEndAt = null;
+        }
+
+        function playPomodoroChime() {
+            if (!pomodoroState.soundOn) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const audioContext = new AudioContext();
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 880;
+                gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.18, audioContext.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.45);
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.5);
+                oscillator.onended = () => audioContext.close();
+            } catch (err) {}
+        }
+
+        function renderPomodoro() {
+            const duration = getPomodoroModeSeconds(pomodoroState.mode);
+            const elapsed = Math.max(0, duration - pomodoroState.remainingSeconds);
+            const progress = duration > 0 ? Math.min(100, Math.round((elapsed / duration) * 100)) : 0;
+            const cycleTotal = pomodoroState.settings.sessionsBeforeLongBreak;
+            const cyclePosition = pomodoroState.mode === 'work'
+                ? (pomodoroState.completedFocusSessions % cycleTotal) + 1
+                : (pomodoroState.completedFocusSessions % cycleTotal) || cycleTotal;
+            const nextLong = cycleTotal - (pomodoroState.completedFocusSessions % cycleTotal);
+
+            document.getElementById('pomodoro-time').textContent = formatPomodoroTime(pomodoroState.remainingSeconds);
+            document.getElementById('pomodoro-mode-label').textContent = `${POMODORO_LABELS[pomodoroState.mode]} session`;
+            document.getElementById('pomodoro-current-mode').textContent = POMODORO_LABELS[pomodoroState.mode];
+            document.getElementById('pomodoro-cycle-label').textContent = `${pomodoroState.completedFocusSessions} done · cycle ${cyclePosition}/${cycleTotal} · long in ${nextLong}`;
+            document.getElementById('pomodoro-session-count').textContent = pomodoroState.completedFocusSessions;
+            document.getElementById('pomodoro-next-long').textContent = nextLong;
+            document.getElementById('pomodoro-progress').style.setProperty('--progress', progress);
+            document.getElementById('pomodoro-start-pause').textContent = pomodoroState.isRunning ? 'Pause' : 'Start';
+            document.getElementById('pomodoro-sound-toggle').textContent = pomodoroState.soundOn ? '🔔' : '🔕';
+            document.getElementById('pomodoro-sound-toggle').title = pomodoroState.soundOn ? 'Sound on' : 'Sound off';
+            document.getElementById('pomodoro-auto-start').checked = pomodoroState.autoStartNext;
+
+            const focusInput = document.getElementById('pomodoro-focus-input');
+            if (document.activeElement !== focusInput) focusInput.value = pomodoroState.focusText;
+
+            document.getElementById('pomodoro-work-min').value = pomodoroState.settings.workMinutes;
+            document.getElementById('pomodoro-short-min').value = pomodoroState.settings.shortBreakMinutes;
+            document.getElementById('pomodoro-long-min').value = pomodoroState.settings.longBreakMinutes;
+            document.getElementById('pomodoro-cycle-count').value = pomodoroState.settings.sessionsBeforeLongBreak;
+
+            document.querySelectorAll('.pomodoro-mode').forEach(button => {
+                button.classList.toggle('active', button.dataset.mode === pomodoroState.mode);
+            });
+
+            updatePomodoroTitle();
+        }
+
+        function startPomodoro() {
+            if (pomodoroState.remainingSeconds <= 0) {
+                pomodoroState.remainingSeconds = getPomodoroModeSeconds(pomodoroState.mode);
+            }
+            pomodoroState.isRunning = true;
+            pomodoroTargetEndAt = Date.now() + (pomodoroState.remainingSeconds * 1000);
+            if (pomodoroIntervalId) clearInterval(pomodoroIntervalId);
+            pomodoroIntervalId = setInterval(tickPomodoro, 250);
+            tickPomodoro();
+            renderPomodoro();
+        }
+
+        function pausePomodoro() {
+            pomodoroState.isRunning = false;
+            stopPomodoroTicker();
+            savePomodoroState();
+            renderPomodoro();
+        }
+
+        function tickPomodoro() {
+            if (!pomodoroState.isRunning || !pomodoroTargetEndAt) return;
+            const remaining = Math.max(0, Math.ceil((pomodoroTargetEndAt - Date.now()) / 1000));
+            if (remaining !== pomodoroState.remainingSeconds) {
+                pomodoroState.remainingSeconds = remaining;
+                renderPomodoro();
+            }
+            if (remaining <= 0) advancePomodoro(true);
+        }
+
+        function advancePomodoro(countFocusSession) {
+            const completedMode = pomodoroState.mode;
+            stopPomodoroTicker();
+            pomodoroState.isRunning = false;
+
+            if (completedMode === 'work') {
+                if (countFocusSession) pomodoroState.completedFocusSessions += 1;
+                const longBreakDue = countFocusSession && pomodoroState.completedFocusSessions % pomodoroState.settings.sessionsBeforeLongBreak === 0;
+                pomodoroState.mode = longBreakDue ? 'longBreak' : 'shortBreak';
+            } else {
+                pomodoroState.mode = 'work';
+            }
+
+            pomodoroState.remainingSeconds = getPomodoroModeSeconds(pomodoroState.mode);
+            savePomodoroState();
+            playPomodoroChime();
+            renderPomodoro();
+            if (pomodoroState.autoStartNext) startPomodoro();
+        }
+
+        function resetPomodoro() {
+            pomodoroState.isRunning = false;
+            stopPomodoroTicker();
+            pomodoroState.remainingSeconds = getPomodoroModeSeconds(pomodoroState.mode);
+            savePomodoroState();
+            renderPomodoro();
+        }
+
+        function setPomodoroMode(mode) {
+            if (!POMODORO_LABELS[mode]) return;
+            pomodoroState.mode = mode;
+            resetPomodoro();
+        }
+
+        function updatePomodoroSetting(field, inputId) {
+            const input = document.getElementById(inputId);
+            const ranges = {
+                workMinutes: [1, 120],
+                shortBreakMinutes: [1, 60],
+                longBreakMinutes: [1, 90],
+                sessionsBeforeLongBreak: [2, 12]
+            };
+            const [min, max] = ranges[field];
+            pomodoroState.settings[field] = clampNumber(input.value, min, max, POMODORO_DEFAULT_SETTINGS[field]);
+            input.value = pomodoroState.settings[field];
+            if (!pomodoroState.isRunning) {
+                pomodoroState.remainingSeconds = getPomodoroModeSeconds(pomodoroState.mode);
+            } else {
+                pomodoroState.remainingSeconds = Math.min(pomodoroState.remainingSeconds, getPomodoroModeSeconds(pomodoroState.mode));
+                pomodoroTargetEndAt = Date.now() + (pomodoroState.remainingSeconds * 1000);
+            }
+            savePomodoroState();
+            renderPomodoro();
+        }
+
+        function setupPomodoroControls() {
+            document.querySelectorAll('.pomodoro-mode').forEach(button => {
+                button.addEventListener('click', () => setPomodoroMode(button.dataset.mode));
+            });
+            document.getElementById('pomodoro-start-pause').addEventListener('click', () => {
+                if (pomodoroState.isRunning) pausePomodoro();
+                else startPomodoro();
+            });
+            document.getElementById('pomodoro-reset').addEventListener('click', resetPomodoro);
+            document.getElementById('pomodoro-skip').addEventListener('click', () => advancePomodoro(false));
+            document.getElementById('pomodoro-close').addEventListener('click', closePomodoro);
+            document.getElementById('pomodoro-overlay').addEventListener('click', (event) => {
+                if (event.target.id === 'pomodoro-overlay') closePomodoro();
+            });
+            document.getElementById('pomodoro-sound-toggle').addEventListener('click', () => {
+                pomodoroState.soundOn = !pomodoroState.soundOn;
+                savePomodoroState();
+                renderPomodoro();
+            });
+            document.getElementById('pomodoro-auto-start').addEventListener('change', (event) => {
+                pomodoroState.autoStartNext = event.target.checked;
+                savePomodoroState();
+                renderPomodoro();
+            });
+            document.getElementById('pomodoro-focus-input').addEventListener('input', (event) => {
+                pomodoroState.focusText = event.target.value;
+                savePomodoroState();
+            });
+
+            [
+                ['workMinutes', 'pomodoro-work-min'],
+                ['shortBreakMinutes', 'pomodoro-short-min'],
+                ['longBreakMinutes', 'pomodoro-long-min'],
+                ['sessionsBeforeLongBreak', 'pomodoro-cycle-count']
+            ].forEach(([field, inputId]) => {
+                document.getElementById(inputId).addEventListener('change', () => updatePomodoroSetting(field, inputId));
+            });
+        }
+
+        function openPomodoro() {
+            document.getElementById('pomodoro-overlay').classList.add('active');
+            renderPomodoro();
+        }
+
+        function closePomodoro() {
+            document.getElementById('pomodoro-overlay').classList.remove('active');
+        }
+
+        setupPomodoroControls();
+        renderPomodoro();
+
+        // --- UPDATE TEMPLATES ---
+        const templateOverlay = document.getElementById('template-overlay');
+        const templatePreview = document.getElementById('template-preview');
+        const templateStatus = document.getElementById('template-status');
+        const TEMPLATE_STORAGE_KEY = 'hub_update_template_drafts';
+        const TEMPLATE_DEFAULTS_STORAGE_KEY = 'hub_update_template_defaults';
+        const TEMPLATE_MAX_LIST_DEPTH = 3;
+        let activeTemplateKey = 'dailyTargets';
+        let templateDrafts = loadTemplateDrafts();
+        let templateDefaults = loadTemplateDefaults();
+
+        function loadTemplateDrafts() {
+            try {
+                return JSON.parse(localStorage.getItem(TEMPLATE_STORAGE_KEY)) || {};
+            } catch (err) {
+                return {};
+            }
+        }
+
+        function saveTemplateDrafts() {
+            localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(templateDrafts));
+        }
+
+        function loadTemplateDefaults() {
+            try {
+                return JSON.parse(localStorage.getItem(TEMPLATE_DEFAULTS_STORAGE_KEY)) || {};
+            } catch (err) {
+                return {};
+            }
+        }
+
+        function saveTemplateDefaults() {
+            localStorage.setItem(TEMPLATE_DEFAULTS_STORAGE_KEY, JSON.stringify(templateDefaults));
+        }
+
+        function getTemplateDate() {
+            return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+        }
+
+        const updateTemplates = {
+            dailyTargets: {
+                label: 'Daily Targets',
+                html: () => `
+                    <h3><strong>Daily Targets</strong></h3>
+                    <p><strong>Date: ${getTemplateDate()}</strong></p>
+                    <p>Hi Team,<br>Please find below today’s targets:</p>
+                    <p>
+                        <strong>Finetuning Annotated Outline Adapter:</strong><br>
+                        <span style="display: block; margin-left: 24px;"><strong>Last day, 64K H100 stack-validation failed after the patched 2-hour NCCL timeout; the run deadlocked during the first optimizer step, with ranks split between ring-flash-attn collectives and DeepSpeed ZeRO-3 parameter all-gather. -&gt; So start with 16k first, test out all the configs.</strong></span>
+                    </p>
+                    <p>Prepare for the Client Call</p>
+                    <p><strong>Deltek Costpoint:</strong> @Ajay Meitei Rohini revert back to us and confirmed regarding the Access, please validate this and let me know.</p>
+                    <p>Thanks<br>Ramanjit Singh</p>
+                `
+            },
+            dailyUpdates: {
+                label: 'Daily Updates',
+                html: () => `
+                    <h3><strong>Daily Updates</strong></h3>
+                    <p><strong>Date: ${getTemplateDate()}</strong></p>
+                    <p>Hi Team,<br>Please find below today’s updates:</p>
+                    <p><strong>Completed:</strong></p>
+                    <ul>
+                        <li>Add completed work here.</li>
+                    </ul>
+                    <p><strong>In Progress:</strong></p>
+                    <ul>
+                        <li>Add active work here.</li>
+                    </ul>
+                    <p><strong>Blockers / Dependencies:</strong></p>
+                    <ul>
+                        <li>Add blockers or dependencies here.</li>
+                    </ul>
+                    <p><strong>Next Steps:</strong></p>
+                    <ul>
+                        <li>Add next steps here.</li>
+                    </ul>
+                    <p>Thanks<br>Ramanjit Singh</p>
+                `
+            },
+            meetingMinutes: {
+                label: 'Meeting Minutes',
+                html: () => `
+                    <h3><strong>Meeting Minutes</strong></h3>
+                    <p><strong>Date: ${getTemplateDate()}</strong><br><strong>Meeting:</strong> Add meeting name<br><strong>Attendees:</strong> Add attendees</p>
+                    <p><strong>Agenda:</strong></p>
+                    <ul>
+                        <li>Add agenda item.</li>
+                    </ul>
+                    <p><strong>Discussion Notes:</strong></p>
+                    <ul>
+                        <li>Add key discussion point.</li>
+                    </ul>
+                    <p><strong>Decisions:</strong></p>
+                    <ul>
+                        <li>Add decision.</li>
+                    </ul>
+                    <p><strong>Action Items:</strong></p>
+                    <table>
+                        <thead>
+                            <tr><th>Owner</th><th>Action</th><th>Due Date</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Add owner</td><td>Add action item</td><td>Add date</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Thanks<br>Ramanjit Singh</p>
+                `
+            }
+        };
+
+        function saveActiveTemplateDraft() {
+            if (!activeTemplateKey || !templatePreview.innerHTML.trim()) return;
+            templateDrafts[activeTemplateKey] = templatePreview.innerHTML;
+            saveTemplateDrafts();
+        }
+
+        function getTemplateStartHtml(templateKey) {
+            return templateDrafts[templateKey] || templateDefaults[templateKey] || updateTemplates[templateKey].html();
+        }
+
+        function saveCurrentTemplateAsDefault() {
+            if (!activeTemplateKey || !templatePreview.innerHTML.trim()) return;
+            templateDefaults[activeTemplateKey] = templatePreview.innerHTML;
+            templateDrafts[activeTemplateKey] = templatePreview.innerHTML;
+            saveTemplateDefaults();
+            saveTemplateDrafts();
+            templateStatus.textContent = `${updateTemplates[activeTemplateKey].label} default saved`;
+        }
+
+        function renderTemplate(templateKey, resetDraft = false) {
+            if (!updateTemplates[templateKey]) return;
+            if (!resetDraft && templatePreview.innerHTML.trim()) saveActiveTemplateDraft();
+            activeTemplateKey = templateKey;
+            if (resetDraft) {
+                delete templateDrafts[templateKey];
+                saveTemplateDrafts();
+            }
+            templatePreview.innerHTML = getTemplateStartHtml(templateKey);
+            templateStatus.textContent = updateTemplates[templateKey].label;
+            document.querySelectorAll('.template-tab').forEach(button => {
+                button.classList.toggle('active', button.dataset.template === templateKey);
+            });
+            updateTemplateToolbarState();
+        }
+
+        function openTemplates() {
+            renderTemplate(activeTemplateKey);
+            templateOverlay.classList.add('active');
+        }
+
+        function closeTemplates() {
+            saveActiveTemplateDraft();
+            templateOverlay.classList.remove('active');
+        }
+
+        function fallbackCopyRenderedTemplate() {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(templatePreview);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            const copied = document.execCommand('copy');
+            selection.removeAllRanges();
+            if (!copied) throw new Error('Copy command failed');
+        }
+
+        async function copyRenderedTemplate() {
+            saveActiveTemplateDraft();
+            const html = `<div>${templatePreview.innerHTML}</div>`;
+            const text = templatePreview.innerText;
+            try {
+                fallbackCopyRenderedTemplate();
+                templateStatus.textContent = `${updateTemplates[activeTemplateKey].label} copied`;
+                return;
+            } catch (err) {
+                try {
+                    if (!navigator.clipboard || !window.ClipboardItem) throw new Error('Rich clipboard unavailable');
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            'text/html': new Blob([html], { type: 'text/html' }),
+                            'text/plain': new Blob([text], { type: 'text/plain' })
+                        })
+                    ]);
+                    templateStatus.textContent = `${updateTemplates[activeTemplateKey].label} copied`;
+                } catch (fallbackErr) {
+                    templateStatus.textContent = 'Copy failed';
+                }
+            }
+        }
+
+        function runTemplateCommand(command) {
+            templatePreview.focus();
+            document.execCommand(command, false, null);
+            saveActiveTemplateDraft();
+            updateTemplateToolbarState();
+        }
+
+        function getTemplateSelection() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || !templatePreview.contains(selection.anchorNode)) return null;
+            return selection;
+        }
+
+        function getCurrentTemplateListItem() {
+            const selection = getTemplateSelection();
+            if (!selection) return null;
+            const node = selection.anchorNode.nodeType === Node.ELEMENT_NODE ? selection.anchorNode : selection.anchorNode.parentElement;
+            return node ? node.closest('li') : null;
+        }
+
+        function getCurrentTemplateListDepth() {
+            const listItem = getCurrentTemplateListItem();
+            if (!listItem) return 0;
+            let node = listItem.parentElement;
+            let depth = 0;
+            while (node && templatePreview.contains(node)) {
+                if (/^(UL|OL)$/i.test(node.tagName)) depth += 1;
+                node = node.parentElement;
+            }
+            return depth;
+        }
+
+        function getCurrentTemplateBlock() {
+            const selection = getTemplateSelection();
+            if (!selection || !selection.isCollapsed) return null;
+            let node = selection.anchorNode;
+            while (node && node !== templatePreview) {
+                if (node.nodeType === Node.ELEMENT_NODE && /^(P|DIV|H1|H2|H3|H4|LI|TD|TH)$/i.test(node.tagName)) {
+                    return node;
+                }
+                node = node.parentNode;
+            }
+            return selection.anchorNode.nodeType === Node.TEXT_NODE ? selection.anchorNode : null;
+        }
+
+        function getTemplateTextBeforeCaret(block) {
+            const selection = getTemplateSelection();
+            if (!selection || !block) return '';
+            const range = selection.getRangeAt(0);
+            const beforeCaret = document.createRange();
+            beforeCaret.selectNodeContents(block);
+            beforeCaret.setEnd(range.startContainer, range.startOffset);
+            return beforeCaret.toString();
+        }
+
+        function replaceTemplateMarkerWithList(command) {
+            const selection = getTemplateSelection();
+            const block = getCurrentTemplateBlock();
+            if (!selection || !block) return false;
+
+            const range = selection.getRangeAt(0);
+            const markerRange = document.createRange();
+            markerRange.selectNodeContents(block);
+            markerRange.setEnd(range.startContainer, range.startOffset);
+            markerRange.deleteContents();
+
+            const nextRange = document.createRange();
+            nextRange.selectNodeContents(block);
+            nextRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(nextRange);
+
+            document.execCommand(command, false, null);
+            setTimeout(() => {
+                saveActiveTemplateDraft();
+                updateTemplateToolbarState();
+            }, 0);
+            return true;
+        }
+
+        function handleTemplateListShortcuts(event) {
+            if (event.key === 'Tab') {
+                const depth = getCurrentTemplateListDepth();
+                if (!depth) return;
+                event.preventDefault();
+                if (event.shiftKey) {
+                    document.execCommand('outdent', false, null);
+                } else if (depth < TEMPLATE_MAX_LIST_DEPTH) {
+                    document.execCommand('indent', false, null);
+                }
+                saveActiveTemplateDraft();
+                updateTemplateToolbarState();
+                return;
+            }
+
+            if (event.key === ' ') {
+                const marker = getTemplateTextBeforeCaret(getCurrentTemplateBlock()).trim();
+                if (marker === '*') {
+                    event.preventDefault();
+                    replaceTemplateMarkerWithList('insertUnorderedList');
+                } else if (marker === '1' || marker === '1.') {
+                    event.preventDefault();
+                    replaceTemplateMarkerWithList('insertOrderedList');
+                }
+            }
+        }
+
+        function updateTemplateToolbarState() {
+            try {
+                document.getElementById('template-bold').classList.toggle('active', document.queryCommandState('bold'));
+                document.getElementById('template-italic').classList.toggle('active', document.queryCommandState('italic'));
+                document.getElementById('template-ul').classList.toggle('active', document.queryCommandState('insertUnorderedList'));
+                document.getElementById('template-ol').classList.toggle('active', document.queryCommandState('insertOrderedList'));
+            } catch (err) {}
+        }
+
+        function setupTemplateControls() {
+            document.querySelectorAll('.template-tab').forEach(button => {
+                button.addEventListener('click', () => renderTemplate(button.dataset.template));
+            });
+            [
+                ['template-bold', 'bold'],
+                ['template-italic', 'italic'],
+                ['template-ul', 'insertUnorderedList'],
+                ['template-ol', 'insertOrderedList']
+            ].forEach(([buttonId, command]) => {
+                const button = document.getElementById(buttonId);
+                button.addEventListener('mousedown', event => event.preventDefault());
+                button.addEventListener('click', () => runTemplateCommand(command));
+            });
+            templatePreview.addEventListener('input', saveActiveTemplateDraft);
+            templatePreview.addEventListener('keydown', handleTemplateListShortcuts);
+            templatePreview.addEventListener('keyup', updateTemplateToolbarState);
+            templatePreview.addEventListener('mouseup', updateTemplateToolbarState);
+            document.getElementById('template-save-default').addEventListener('click', saveCurrentTemplateAsDefault);
+            document.getElementById('template-copy').addEventListener('click', copyRenderedTemplate);
+            document.getElementById('template-reset').addEventListener('click', () => renderTemplate(activeTemplateKey, true));
+            document.getElementById('template-close').addEventListener('click', closeTemplates);
+            templateOverlay.addEventListener('click', (event) => {
+                if (event.target.id === 'template-overlay') closeTemplates();
+            });
+            document.addEventListener('selectionchange', () => {
+                if (templateOverlay.classList.contains('active')) updateTemplateToolbarState();
+            });
+        }
+
+        setupTemplateControls();
+        renderTemplate(activeTemplateKey);
+
+        // --- APP STATE & RENDER ---
+        let apps = JSON.parse(localStorage.getItem('hub_apps')) || [
+            { id: 1, name: 'ChatGPT', url: 'https://chat.openai.com', iconUrl: '', isRoutine: true },
+            { id: 2, name: 'Mail', url: 'https://mail.google.com', iconUrl: '', isRoutine: true },
+            { id: 3, name: 'GitHub', url: 'https://github.com', iconUrl: '', isRoutine: false }
+        ];
+
+        let editingAppId = null;
+        let dragStartIndex = null; 
+
+        function getIconSource(app) {
+            if (app.iconUrl && app.iconUrl.trim() !== '') return app.iconUrl; 
+            let domain = ''; try { domain = new URL(app.url).hostname; } catch(e) {}
+            return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+        }
+
+        function renderApps() {
+            const grid = document.getElementById('apps-grid');
+            grid.innerHTML = '';
+            apps.forEach((app, index) => {
+                const iconSource = getIconSource(app);
+                const div = document.createElement('div');
+                div.className = 'app-tile'; div.draggable = true; 
+                
+                div.onclick = (e) => { if(!e.target.classList.contains('tile-action-btn')) window.open(app.url, '_blank'); };
+                div.addEventListener('dragstart', () => { dragStartIndex = index; setTimeout(() => div.classList.add('dragging'), 0); });
+                div.addEventListener('dragend', () => { div.classList.remove('dragging'); dragStartIndex = null; });
+                div.addEventListener('dragover', (e) => e.preventDefault());
+                div.addEventListener('dragenter', (e) => { e.preventDefault(); if (dragStartIndex !== index) div.classList.add('drag-over'); });
+                div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
+                div.addEventListener('drop', () => { div.classList.remove('drag-over'); if (dragStartIndex !== null && dragStartIndex !== index) reorderApps(dragStartIndex, index); });
+                
+                div.innerHTML = `
+                    <button class="tile-action-btn edit-btn" onclick="openModal(${app.id}, event)">✎</button>
+                    <button class="tile-action-btn delete-btn" onclick="deleteApp(${app.id}, event)">×</button>
+                    <img src="${iconSource}" class="app-icon" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23333%22/></svg>'">
+                    <span class="app-name">${app.name}</span>
+                `;
+                grid.appendChild(div);
+            });
+
+            const pomodoroTile = document.createElement('div');
+            pomodoroTile.className = 'app-tile';
+            pomodoroTile.onclick = openPomodoro;
+            pomodoroTile.innerHTML = `
+                <div class="app-icon" style="display: grid; place-items: center; background: rgba(255,255,255,0.92); color: #09090b; font-size: 1.35rem;">⏱</div>
+                <span class="app-name">Pomodoro</span>
+            `;
+            grid.appendChild(pomodoroTile);
+
+            const templatesTile = document.createElement('div');
+            templatesTile.className = 'app-tile';
+            templatesTile.onclick = openTemplates;
+            templatesTile.innerHTML = `
+                <div class="app-icon" style="display: grid; place-items: center; background: rgba(255,255,255,0.92); color: #09090b; font-size: 1.2rem; font-weight: 700;">T</div>
+                <span class="app-name" style="white-space: normal; line-height: 1.15;">Update Templates</span>
+            `;
+            grid.appendChild(templatesTile);
+
+            const addBtn = document.createElement('div');
+            addBtn.className = 'app-tile add-tile'; addBtn.onclick = () => openModal(null);
+            addBtn.innerHTML = `<div style="font-size: 2rem; color: #a1a1aa;">+</div><span class="app-name" style="color: #a1a1aa;">Add App</span>`;
+            grid.appendChild(addBtn);
+        }
+
+        function reorderApps(fromIndex, toIndex) {
+            const movedApp = apps.splice(fromIndex, 1)[0]; 
+            apps.splice(toIndex, 0, movedApp); 
+            localStorage.setItem('hub_apps', JSON.stringify(apps)); renderApps();
+        }
+
+        // --- APP MANAGEMENT ---
+        function openModal(appId = null, event = null) { 
+            if (event) event.stopPropagation(); 
+            editingAppId = appId;
+            if (appId) {
+                const app = apps.find(a => a.id === appId);
+                document.getElementById('app-name').value = app.name;
+                document.getElementById('app-url').value = app.url;
+                document.getElementById('app-icon-url').value = app.iconUrl || '';
+                document.getElementById('app-routine').checked = app.isRoutine || false;
+                document.getElementById('modal-title').textContent = 'Edit App';
+                document.getElementById('modal-submit-btn').textContent = 'Save Changes';
+            } else {
+                document.getElementById('app-name').value = '';
+                document.getElementById('app-url').value = '';
+                document.getElementById('app-icon-url').value = '';
+                document.getElementById('app-routine').checked = true;
+                document.getElementById('modal-title').textContent = 'Add New App';
+                document.getElementById('modal-submit-btn').textContent = 'Add App';
+            }
+            document.getElementById('app-modal').style.display = 'flex'; 
+        }
+
+        function closeModal() { document.getElementById('app-modal').style.display = 'none'; editingAppId = null; }
+
+        function saveApp() {
+            const name = document.getElementById('app-name').value.trim();
+            let url = document.getElementById('app-url').value.trim();
+            const iconUrl = document.getElementById('app-icon-url').value.trim();
+            const isRoutine = document.getElementById('app-routine').checked;
+            
+            if (!name || !url) return alert('Please fill App Name and URL');
+            if (!url.startsWith('http')) url = 'https://' + url;
+
+            if (editingAppId) {
+                const i = apps.findIndex(a => a.id === editingAppId);
+                if (i !== -1) apps[i] = { ...apps[i], name, url, iconUrl, isRoutine };
+            } else apps.push({ id: Date.now(), name, url, iconUrl, isRoutine });
+
+            localStorage.setItem('hub_apps', JSON.stringify(apps)); closeModal(); renderApps();
+        }
+
+        function deleteApp(id, event) {
+            event.stopPropagation(); apps = apps.filter(app => app.id !== id);
+            localStorage.setItem('hub_apps', JSON.stringify(apps)); renderApps();
+        }
+
+        // --- CHECKLIST STATE & RENDER ---
+        let todos = JSON.parse(localStorage.getItem('hub_todos')) || [];
+        let dragTodoIndex = null;
+
+        function renderTodos() {
+            const list = document.getElementById('todo-list'); list.innerHTML = '';
+            let hasCompleted = false;
+
+            todos.forEach((todo, index) => {
+                if (todo.completed) hasCompleted = true;
+                
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.draggable = true;
+
+                li.addEventListener('dragstart', () => { dragTodoIndex = index; setTimeout(() => li.classList.add('dragging'), 0); });
+                li.addEventListener('dragend', () => { li.classList.remove('dragging'); dragTodoIndex = null; });
+                li.addEventListener('dragover', (e) => e.preventDefault());
+                li.addEventListener('dragenter', (e) => { e.preventDefault(); if (dragTodoIndex !== index) li.classList.add('drag-over'); });
+                li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+                li.addEventListener('drop', () => { 
+                    li.classList.remove('drag-over'); 
+                    if (dragTodoIndex !== null && dragTodoIndex !== index) reorderTodos(dragTodoIndex, index); 
+                });
+
+                li.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo(${todo.id})">
+                    <span class="todo-text">${todo.text}</span>
+                    <button class="todo-delete" onclick="deleteTodo(${todo.id})">×</button>
+                `;
+                list.appendChild(li);
+            });
+
+            document.getElementById('clear-completed-btn').style.display = hasCompleted ? 'block' : 'none';
+        }
+
+        document.getElementById('todo-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim() !== '') {
+                todos.push({ id: Date.now(), text: this.value.trim(), completed: false });
+                localStorage.setItem('hub_todos', JSON.stringify(todos)); this.value = ''; renderTodos();
+            }
+        });
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id); if (todo) todo.completed = !todo.completed;
+            localStorage.setItem('hub_todos', JSON.stringify(todos)); renderTodos();
+        }
+        
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            localStorage.setItem('hub_todos', JSON.stringify(todos)); renderTodos();
+        }
+
+        function reorderTodos(fromIndex, toIndex) {
+            const movedTodo = todos.splice(fromIndex, 1)[0]; 
+            todos.splice(toIndex, 0, movedTodo); 
+            localStorage.setItem('hub_todos', JSON.stringify(todos)); renderTodos();
+        }
+
+        function clearCompletedTodos() {
+            todos = todos.filter(t => !t.completed);
+            localStorage.setItem('hub_todos', JSON.stringify(todos)); renderTodos();
+        }
+
+        // --- SETTINGS & BACKUP (IMPORT/EXPORT) ---
+        function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+
+        function exportData() {
+            const data = {
+                hub_apps: JSON.parse(localStorage.getItem('hub_apps')),
+                hub_todos: JSON.parse(localStorage.getItem('hub_todos')),
+                hub_wallpaper: JSON.parse(localStorage.getItem('hub_wallpaper')),
+                hub_pomodoro: getPomodoroBackup(),
+                hub_update_template_drafts: templateDrafts,
+                hub_update_template_defaults: templateDefaults
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `start-page-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.hub_apps) localStorage.setItem('hub_apps', JSON.stringify(data.hub_apps));
+                    if (data.hub_todos) localStorage.setItem('hub_todos', JSON.stringify(data.hub_todos));
+                    if (data.hub_wallpaper !== undefined) localStorage.setItem('hub_wallpaper', JSON.stringify(data.hub_wallpaper));
+                    if (data.hub_pomodoro) localStorage.setItem(POMODORO_STORAGE_KEY, JSON.stringify(data.hub_pomodoro));
+                    if (data.hub_update_template_drafts) localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(data.hub_update_template_drafts));
+                    if (data.hub_update_template_defaults) localStorage.setItem(TEMPLATE_DEFAULTS_STORAGE_KEY, JSON.stringify(data.hub_update_template_defaults));
+                    
+                    // Reload state from new LocalStorage
+                    apps = data.hub_apps || apps;
+                    todos = data.hub_todos || [];
+                    useWallpaper = data.hub_wallpaper !== undefined ? data.hub_wallpaper : true;
+                    if (data.hub_pomodoro) {
+                        stopPomodoroTicker();
+                        pomodoroState = loadPomodoroState();
+                        renderPomodoro();
+                    }
+                    if (data.hub_update_template_drafts) {
+                        templateDrafts = data.hub_update_template_drafts;
+                        renderTemplate(activeTemplateKey);
+                    }
+                    if (data.hub_update_template_defaults) {
+                        templateDefaults = data.hub_update_template_defaults;
+                        renderTemplate(activeTemplateKey);
+                    }
+                    
+                    applyWallpaper();
+                    scheduleWallpaperRefresh();
+                    renderApps();
+                    renderTodos();
+                    closeSettings();
+                    alert("Backup restored successfully!");
+                } catch (err) {
+                    alert("Error importing file. Make sure it's a valid backup JSON.");
+                }
+                event.target.value = ''; 
+            };
+            reader.readAsText(file);
+        }
+
+        // --- START MY DAY ---
+        document.getElementById('start-day-btn').addEventListener('click', () => {
+            const routineApps = apps.filter(app => app.isRoutine);
+            if(routineApps.length === 0) return alert("You don't have any apps set to your morning routine yet!");
+            routineApps.forEach((app, index) => { setTimeout(() => { window.open(app.url, '_blank'); }, index * 100); });
+        });
+
+        // Init
+        renderApps(); renderTodos();
+
+
+        // --- COMMAND BAR ENGINE ---
+        const cmdOverlay = document.getElementById('cmd-overlay');
+        const cmdInput = document.getElementById('cmd-input');
+        const cmdResults = document.getElementById('cmd-results');
+        let currentCmdItems = [];
+        let selectedCmdIndex = 0;
+
+        function isCommandBarShortcut(event) {
+            const key = event.key ? event.key.toLowerCase() : '';
+            return (event.ctrlKey || event.metaKey) && !event.altKey && (key === 'k' || event.code === 'KeyK');
+        }
+
+        function openCommandBar() {
+            cmdOverlay.classList.add('active');
+            cmdInput.value = '';
+            renderCmdResults('');
+            requestAnimationFrame(() => cmdInput.focus());
+        }
+
+        function closeCommandBar() {
+            cmdOverlay.classList.remove('active');
+            cmdInput.value = '';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (isCommandBarShortcut(e)) {
+                e.preventDefault();
+                e.stopPropagation();
+                openCommandBar();
+                return;
+            }
+            if (e.key === 'Escape' && cmdOverlay.classList.contains('active')) {
+                closeCommandBar();
+            }
+            if (e.key === 'Escape' && document.getElementById('pomodoro-overlay').classList.contains('active')) {
+                closePomodoro();
+            }
+            if (e.key === 'Escape' && document.getElementById('template-overlay').classList.contains('active')) {
+                closeTemplates();
+            }
+        }, true);
+
+        cmdOverlay.addEventListener('click', (e) => {
+            if (e.target === cmdOverlay) closeCommandBar();
+        });
+
+        cmdInput.addEventListener('input', (e) => renderCmdResults(e.target.value.toLowerCase()));
+
+        cmdInput.addEventListener('keydown', (e) => {
+            if (!cmdOverlay.classList.contains('active') || currentCmdItems.length === 0) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedCmdIndex = (selectedCmdIndex + 1) % currentCmdItems.length;
+                updateCmdSelection();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedCmdIndex = (selectedCmdIndex - 1 + currentCmdItems.length) % currentCmdItems.length;
+                updateCmdSelection();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                executeCmdItem(currentCmdItems[selectedCmdIndex]);
+            }
+        });
+
+        function renderCmdResults(query) {
+            cmdResults.innerHTML = '';
+            currentCmdItems = [];
+            selectedCmdIndex = 0;
+
+            const matchedApps = apps.filter(app => app.name.toLowerCase().includes(query));
+            matchedApps.forEach(app => currentCmdItems.push({ type: 'app', data: app }));
+            if ('pomodoro timer focus'.includes(query)) {
+                currentCmdItems.push({ type: 'pomodoro' });
+            }
+            if ('update templates daily targets daily updates meeting minutes'.includes(query)) {
+                currentCmdItems.push({ type: 'templates' });
+            }
+
+            if (query.trim() !== '') {
+                const matchedTodos = todos.filter(t => t.text.toLowerCase().includes(query));
+                matchedTodos.forEach(todo => currentCmdItems.push({ type: 'todo', data: todo }));
+                currentCmdItems.push({ type: 'chatgpt', query: query.trim() });
+                currentCmdItems.push({ type: 'google', query: query.trim() });
+            }
+
+            currentCmdItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = `cmd-result-item ${index === 0 ? 'selected' : ''}`;
+                li.onmouseenter = () => { selectedCmdIndex = index; updateCmdSelection(); };
+                li.onclick = () => executeCmdItem(item);
+
+                if (item.type === 'app') {
+                    li.innerHTML = `<img src="${getIconSource(item.data)}" class="cmd-icon"><span class="cmd-text">${item.data.name}</span><span class="cmd-badge">App</span>`;
+                } else if (item.type === 'pomodoro') {
+                    li.innerHTML = `<div class="cmd-icon">⏱</div><span class="cmd-text">Pomodoro Timer</span><span class="cmd-badge">App</span>`;
+                } else if (item.type === 'templates') {
+                    li.innerHTML = `<div class="cmd-icon">T</div><span class="cmd-text">Update Templates</span><span class="cmd-badge">App</span>`;
+                } else if (item.type === 'todo') {
+                    li.innerHTML = `<div class="cmd-icon">${item.data.completed ? '✓' : '○'}</div><span class="cmd-text">${item.data.text}</span><span class="cmd-badge">Task</span>`;
+                } else if (item.type === 'chatgpt') {
+                    li.innerHTML = `<div class="cmd-icon" style="background: #10a37f; color: white;">AI</div><span class="cmd-text">Ask ChatGPT: "${item.query}"</span>`;
+                } else if (item.type === 'google') {
+                    li.innerHTML = `<div class="cmd-icon" style="background: #4285f4; color: white;">G</div><span class="cmd-text">Search Google for "${item.query}"</span>`;
+                }
+                cmdResults.appendChild(li);
+            });
+        }
+
+        function updateCmdSelection() {
+            const items = cmdResults.querySelectorAll('.cmd-result-item');
+            items.forEach((item, index) => {
+                if (index === selectedCmdIndex) {
+                    item.classList.add('selected');
+                    item.scrollIntoView({ block: 'nearest' });
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function executeCmdItem(item) {
+            if (item.type === 'app') window.open(item.data.url, '_blank');
+            else if (item.type === 'pomodoro') openPomodoro();
+            else if (item.type === 'templates') openTemplates();
+            else if (item.type === 'todo') toggleTodo(item.data.id);
+            else if (item.type === 'chatgpt') window.open(`https://chatgpt.com/?q=${encodeURIComponent(item.query)}`, '_blank');
+            else if (item.type === 'google') window.open(`https://www.google.com/search?q=${encodeURIComponent(item.query)}`, '_blank');
+            closeCommandBar();
+        }
+    </script>
+</body>
+</html>
