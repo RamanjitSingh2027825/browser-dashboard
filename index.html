@@ -445,20 +445,83 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         .clip-frame { width: 100%; height: 100%; border: 0; display: block; background: #000; }
-        .clip-meta { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-top: 14px; }
-        .clip-meta > div:first-child { min-width: 0; }
-        .clip-description { color: rgba(255,255,255,0.82); font-size: 0.95rem; line-height: 1.45; margin-bottom: 8px; }
-        .clip-source { color: var(--text-muted); font-size: 0.82rem; margin-bottom: 10px; }
+        .clip-meta {
+            display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px;
+            align-items: end; margin-top: 14px; padding: 12px 14px 14px;
+            background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px;
+        }
+        .clip-info { min-width: 0; }
+        .clip-description { color: rgba(255,255,255,0.84); font-size: 0.95rem; line-height: 1.42; margin-bottom: 7px; max-width: 56ch; }
+        .clip-source { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 10px; }
         .clip-tags { display: flex; flex-wrap: wrap; gap: 6px; }
         .clip-chip {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.82); border-radius: 999px; padding: 4px 9px; font-size: 0.74rem;
+            background: color-mix(in srgb, var(--app-accent) 18%, rgba(255,255,255,0.08));
+            border: 1px solid color-mix(in srgb, var(--app-accent) 24%, rgba(255,255,255,0.08));
+            color: rgba(255,255,255,0.86); border-radius: 999px; padding: 4px 9px; font-size: 0.72rem; font-weight: 650;
         }
-        .clip-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+        .clip-actions {
+            display: flex; align-items: center; justify-content: flex-end; gap: 6px; flex: 0 0 auto;
+            align-self: stretch; padding-left: 14px; border-left: 1px solid rgba(255,255,255,0.08);
+        }
+        .clip-actions .pomodoro-btn {
+            min-height: 34px; height: 34px; border-radius: 9px; padding: 0 11px;
+            font-size: 0.78rem; line-height: 1; white-space: nowrap;
+        }
+        .clip-actions #clip-like,
+        .clip-actions #clip-reload {
+            width: 34px; padding: 0; font-size: 0.95rem;
+        }
+        .clip-actions #clip-like.is-liked {
+            background: color-mix(in srgb, var(--app-accent) 20%, rgba(255,255,255,0.08));
+            border-color: color-mix(in srgb, var(--app-accent) 50%, rgba(255,255,255,0.12));
+            color: var(--app-accent);
+        }
+        .clip-actions #clip-refresh {
+            background: var(--app-accent); color: #09090b; border-color: transparent; padding: 0 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+        }
+        .clip-actions #clip-refresh:hover { background: color-mix(in srgb, var(--app-accent) 86%, white 14%); }
+        .clip-actions #clip-saved-toggle {
+            color: rgba(255,255,255,0.78); background: rgba(255,255,255,0.045);
+        }
+        .clip-saved-panel {
+            margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;
+        }
+        .clip-saved-head {
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            color: var(--text-muted); font-size: 0.78rem; font-weight: 700; margin-bottom: 8px;
+        }
+        .clip-saved-list { display: grid; gap: 8px; max-height: 230px; overflow-y: auto; padding-right: 4px; }
+        .clip-saved-list::-webkit-scrollbar { width: 6px; }
+        .clip-saved-list::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; }
+        .clip-saved-item {
+            display: grid; grid-template-columns: 1fr 34px; gap: 8px; align-items: stretch;
+        }
+        .clip-saved-main {
+            min-width: 0; text-align: left; background: rgba(0,0,0,0.24); color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; padding: 9px 10px; cursor: pointer;
+        }
+        .clip-saved-main:hover { background: rgba(255,255,255,0.08); }
+        .clip-saved-title {
+            display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            font-size: 0.86rem; font-weight: 700; margin-bottom: 3px;
+        }
+        .clip-saved-sub { display: block; color: var(--text-muted); font-size: 0.74rem; }
+        .clip-saved-delete {
+            background: rgba(0,0,0,0.24); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 8px; cursor: pointer; font-size: 1.1rem;
+        }
+        .clip-saved-delete:hover { color: var(--danger); background: rgba(239,68,68,0.12); }
+        .clip-empty-saved {
+            background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 10px; color: var(--text-muted); font-size: 0.84rem;
+        }
         @media (max-width: 640px) {
-            .clip-meta { flex-direction: column; }
-            .clip-actions { width: 100%; }
+            .clip-meta { grid-template-columns: 1fr; align-items: stretch; }
+            .clip-actions { width: 100%; padding-left: 0; padding-top: 10px; border-left: 0; border-top: 1px solid rgba(255,255,255,0.08); }
             .clip-actions .pomodoro-btn { flex: 1; }
+            .clip-actions #clip-like,
+            .clip-actions #clip-reload { flex: 0 0 38px; width: 38px; }
         }
 
         /* Math Challenger */
@@ -1158,15 +1221,24 @@
             <p class="template-status" id="clip-load-status"></p>
 
             <div class="clip-meta">
-                <div>
+                <div class="clip-info">
                     <p class="clip-description" id="clip-description"></p>
                     <p class="clip-source" id="clip-source"></p>
                     <div class="clip-tags" id="clip-tags"></div>
                 </div>
                 <div class="clip-actions">
+                    <button class="pomodoro-btn" id="clip-like" type="button" title="Save clip">♡</button>
+                    <button class="pomodoro-btn" id="clip-saved-toggle" type="button">Saved</button>
                     <button class="pomodoro-btn" id="clip-refresh" type="button">New Clip</button>
-                    <button class="pomodoro-btn primary" id="clip-reload" type="button">Reload</button>
+                    <button class="pomodoro-btn" id="clip-reload" type="button" title="Restart clip">↻</button>
                 </div>
+            </div>
+            <div class="clip-saved-panel" id="clip-saved-panel" hidden>
+                <div class="clip-saved-head">
+                    <span>Saved Clips</span>
+                    <span id="clip-saved-count">0</span>
+                </div>
+                <div class="clip-saved-list" id="clip-saved-list"></div>
             </div>
         </div>
     </div>
@@ -2237,6 +2309,7 @@
             }
         ];
         let clipState = loadClipState();
+        let clipRequestId = 0;
 
         function loadClipState() {
             try {
@@ -2250,29 +2323,203 @@
             localStorage.setItem(CLIP_STORAGE_KEY, JSON.stringify(clipState));
         }
 
-        function getRandomClipIndex(excludedIndex = -1) {
-            if (CLIP_LIBRARY.length <= 1) return 0;
+        function getClipHistory() {
+            return Array.isArray(clipState.history) ? clipState.history : [];
+        }
+
+        function getLikedClips() {
+            return Array.isArray(clipState.liked) ? clipState.liked : [];
+        }
+
+        function escapeClipText(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function rememberClip(videoId) {
+            if (!videoId) return;
+            const history = getClipHistory().filter(id => id !== videoId);
+            history.push(videoId);
+            clipState.history = history.slice(-40);
+        }
+
+        function getRandomFallbackClip(excludedIndex = -1) {
+            const fallbackPool = CLIP_LIBRARY
+                .map((clip, index) => ({ clip, index }))
+                .filter(item => !/tedx|ted\b/i.test(`${item.clip.source} ${item.clip.title}`));
+            const pool = fallbackPool.length ? fallbackPool : CLIP_LIBRARY.map((clip, index) => ({ clip, index }));
+            if (pool.length <= 1) return pool[0]?.index || 0;
             let nextIndex = excludedIndex;
             while (nextIndex === excludedIndex) {
-                nextIndex = Math.floor(Math.random() * CLIP_LIBRARY.length);
+                nextIndex = pool[Math.floor(Math.random() * pool.length)].index;
             }
             return nextIndex;
         }
 
-        function ensureClipState(forceNew = false) {
+        function getFallbackClip(forceNew = false) {
             const hasValidClip = Number.isInteger(clipState.index) && Boolean(CLIP_LIBRARY[clipState.index]);
             if (forceNew || !hasValidClip) {
-                clipState = {
-                    index: getRandomClipIndex(hasValidClip ? clipState.index : -1)
-                };
+                clipState.index = getRandomFallbackClip(hasValidClip ? clipState.index : -1);
+                delete clipState.clip;
                 saveClipState();
             }
-            return clipState;
+            return CLIP_LIBRARY[clipState.index];
         }
 
         function getCurrentClip() {
-            const state = ensureClipState();
-            return CLIP_LIBRARY[state.index];
+            return clipState.clip || getFallbackClip();
+        }
+
+        function normalizeClip(clip) {
+            return {
+                title: clip.title || 'Fresh YouTube clip',
+                source: clip.source || 'YouTube',
+                videoId: clip.videoId,
+                start: Number.isFinite(Number(clip.start)) ? Number(clip.start) : 0,
+                end: Number.isFinite(Number(clip.end)) ? Number(clip.end) : undefined,
+                category: clip.category || 'Fresh pick',
+                description: clip.description || 'A short clip picked from the current Clip Mix search filters.',
+                tags: Array.isArray(clip.tags) && clip.tags.length ? clip.tags.slice(0, 4) : ['Fresh', 'YouTube']
+            };
+        }
+
+        function setCurrentClip(clip) {
+            clipState.clip = normalizeClip(clip);
+            rememberClip(clipState.clip.videoId);
+            saveClipState();
+            return clipState.clip;
+        }
+
+        function isClipLiked(clip = getCurrentClip()) {
+            return Boolean(clip?.videoId && getLikedClips().some(item => item.videoId === clip.videoId));
+        }
+
+        function toggleClipLike() {
+            const clip = getCurrentClip();
+            if (!clip?.videoId) return;
+            const liked = getLikedClips();
+            if (isClipLiked(clip)) {
+                clipState.liked = liked.filter(item => item.videoId !== clip.videoId);
+                document.getElementById('clip-load-status').textContent = 'Removed from saved clips.';
+            } else {
+                clipState.liked = [
+                    { ...normalizeClip(clip), savedAt: new Date().toISOString() },
+                    ...liked.filter(item => item.videoId !== clip.videoId)
+                ].slice(0, 80);
+                document.getElementById('clip-load-status').textContent = 'Saved for later.';
+            }
+            saveClipState();
+            renderClipLikeState();
+            renderSavedClips();
+        }
+
+        function renderClipLikeState() {
+            const liked = getLikedClips();
+            const likeButton = document.getElementById('clip-like');
+            const savedButton = document.getElementById('clip-saved-toggle');
+            const count = document.getElementById('clip-saved-count');
+            if (likeButton) {
+                const likedNow = isClipLiked();
+                likeButton.textContent = likedNow ? '♥' : '♡';
+                likeButton.title = likedNow ? 'Remove from saved' : 'Save clip';
+                likeButton.classList.toggle('is-liked', likedNow);
+            }
+            if (savedButton) savedButton.textContent = `Saved (${liked.length})`;
+            if (count) count.textContent = `${liked.length} saved`;
+        }
+
+        function renderSavedClips() {
+            const panel = document.getElementById('clip-saved-panel');
+            const list = document.getElementById('clip-saved-list');
+            if (!panel || !list) return;
+            panel.hidden = !clipState.showSaved;
+            renderClipLikeState();
+            if (!clipState.showSaved) return;
+
+            const liked = getLikedClips();
+            list.innerHTML = liked.length
+                ? liked.map(clip => `
+                    <div class="clip-saved-item">
+                        <button class="clip-saved-main" type="button" data-saved-clip="${escapeClipText(clip.videoId)}">
+                            <span class="clip-saved-title">${escapeClipText(clip.title)}</span>
+                            <span class="clip-saved-sub">${escapeClipText(clip.category || 'Clip')} · ${escapeClipText(clip.source || 'YouTube')}</span>
+                        </button>
+                        <button class="clip-saved-delete" type="button" data-delete-saved-clip="${escapeClipText(clip.videoId)}" title="Remove">×</button>
+                    </div>
+                `).join('')
+                : '<div class="clip-empty-saved">No saved clips yet.</div>';
+
+            list.querySelectorAll('[data-saved-clip]').forEach(button => {
+                button.addEventListener('click', () => openSavedClip(button.dataset.savedClip));
+            });
+            list.querySelectorAll('[data-delete-saved-clip]').forEach(button => {
+                button.addEventListener('click', event => {
+                    event.stopPropagation();
+                    deleteSavedClip(button.dataset.deleteSavedClip);
+                });
+            });
+        }
+
+        function toggleSavedClips() {
+            clipState.showSaved = !clipState.showSaved;
+            saveClipState();
+            renderSavedClips();
+        }
+
+        function openSavedClip(videoId) {
+            const savedClip = getLikedClips().find(clip => clip.videoId === videoId);
+            if (!savedClip) return;
+            setCurrentClip(savedClip);
+            renderClipOfHour(true, 'Saved clip.');
+        }
+
+        function deleteSavedClip(videoId) {
+            clipState.liked = getLikedClips().filter(clip => clip.videoId !== videoId);
+            saveClipState();
+            renderSavedClips();
+            renderClipLikeState();
+        }
+
+        function getClipApiUrl() {
+            if (!window.location.origin || window.location.origin === 'null') return null;
+            const url = new URL('/api/clip', window.location.origin);
+            const history = getClipHistory().slice(-20);
+            if (history.length) url.searchParams.set('avoid', history.join(','));
+            url.searchParams.set('fresh', String(Date.now()));
+            return url;
+        }
+
+        async function fetchDynamicClip() {
+            const url = getClipApiUrl();
+            if (!url) throw new Error('Clip search needs the local dashboard server.');
+            const response = await fetch(url.toString(), { cache: 'no-store' });
+            if (!response.ok) throw new Error('Clip search server did not respond.');
+            const payload = await response.json();
+            if (!payload.ok || !payload.clip?.videoId) {
+                throw new Error(payload.message || 'No live clip matched the filters.');
+            }
+            return {
+                clip: setCurrentClip(payload.clip),
+                meta: payload.meta || {}
+            };
+        }
+
+        function renderClipLoading(message = 'Searching YouTube...') {
+            const frame = document.getElementById('clip-frame');
+            frame.src = '';
+            delete frame.dataset.clipKey;
+            document.getElementById('clip-kicker').textContent = 'Clip Mix';
+            document.getElementById('clip-title').textContent = 'Finding a fresh clip...';
+            document.getElementById('clip-description').textContent = 'Mixing communication, lifestyle, facts, vocabulary, and short learning clips.';
+            document.getElementById('clip-source').textContent = '';
+            document.getElementById('clip-tags').innerHTML = '';
+            document.getElementById('clip-load-status').textContent = message;
+            renderClipLikeState();
+            renderSavedClips();
         }
 
         function getClipEmbedUrl(clip, autoplay = false) {
@@ -2290,7 +2537,7 @@
             return `https://www.youtube.com/embed/${clip.videoId}?${params.toString()}`;
         }
 
-        function renderClipOfHour(autoplay = false) {
+        function renderClipOfHour(autoplay = false, statusMessage = 'Loading YouTube clip...') {
             const clip = getCurrentClip();
             const clipKey = `${clip.videoId}-${clip.start || 0}-${clip.end || 0}`;
             const frame = document.getElementById('clip-frame');
@@ -2301,7 +2548,9 @@
             document.getElementById('clip-description').textContent = clip.description;
             document.getElementById('clip-source').textContent = clip.source;
             document.getElementById('clip-tags').innerHTML = clip.tags.map(tag => `<span class="clip-chip">${tag}</span>`).join('');
-            status.textContent = 'Loading YouTube clip...';
+            status.textContent = statusMessage;
+            renderClipLikeState();
+            renderSavedClips();
 
             if (frame.dataset.clipKey !== clipKey || autoplay) {
                 frame.src = getClipEmbedUrl(clip, autoplay);
@@ -2309,30 +2558,44 @@
             }
         }
 
-        function openClipOfHour() {
-            ensureClipState(true);
-            renderClipOfHour(true);
+        async function openClipOfHour() {
             document.getElementById('clip-overlay').classList.add('active');
+            await pickNewClipOfHour();
         }
 
         function closeClipOfHour() {
             const frame = document.getElementById('clip-frame');
+            clipRequestId += 1;
             document.getElementById('clip-overlay').classList.remove('active');
             frame.src = '';
             delete frame.dataset.clipKey;
             document.getElementById('clip-load-status').textContent = '';
         }
 
-        function pickNewClipOfHour() {
-            ensureClipState(true);
-            renderClipOfHour(true);
+        async function pickNewClipOfHour() {
+            const requestId = ++clipRequestId;
+            renderClipLoading();
+            try {
+                const result = await fetchDynamicClip();
+                if (requestId !== clipRequestId || !document.getElementById('clip-overlay').classList.contains('active')) return;
+                const detail = result.meta?.topicLabel
+                    ? `${result.meta.cached ? 'Ready' : 'Fresh'} ${result.meta.topicLabel} pick`
+                    : `${result.meta?.cached ? 'Ready' : 'Fresh'} YouTube pick`;
+                renderClipOfHour(true, detail);
+            } catch (err) {
+                if (requestId !== clipRequestId || !document.getElementById('clip-overlay').classList.contains('active')) return;
+                getFallbackClip(true);
+                renderClipOfHour(true, `${err.message} Using backup clip.`);
+            }
         }
 
         function setupClipOfHourControls() {
             document.getElementById('clip-close').addEventListener('click', closeClipOfHour);
+            document.getElementById('clip-like').addEventListener('click', toggleClipLike);
+            document.getElementById('clip-saved-toggle').addEventListener('click', toggleSavedClips);
             document.getElementById('clip-refresh').addEventListener('click', pickNewClipOfHour);
             document.getElementById('clip-reload').addEventListener('click', () => {
-                renderClipOfHour(true);
+                renderClipOfHour(true, 'Reloading current clip...');
             });
             document.getElementById('clip-frame').addEventListener('load', () => {
                 document.getElementById('clip-load-status').textContent = '';
@@ -2343,6 +2606,7 @@
         }
 
         setupClipOfHourControls();
+        renderClipLikeState();
 
         // --- MATH CHALLENGER ---
         const MATH_STORAGE_KEY = 'hub_math_challenger';
