@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <linearGradient id="humanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00C9FF" />
+      <stop offset="100%" stop-color="#92FE9D" />
+    </linearGradient>
+  </defs>
+  <circle cx="42" cy="26" r="8" fill="#4A00E0" opacity="0.3" />
+  <path d="M30 46 C34 38 50 38 54 46" fill="#4A00E0" opacity="0.3" />
+  <circle cx="28" cy="22" r="10" fill="url(#humanGrad)" />
+  <path d="M12 52 C12 38 44 38 44 52" fill="url(#humanGrad)" />
+  <path d="M28 22 L42 26 M28 42 L42 43" stroke="#FFF" stroke-width="2.5" opacity="0.8" />
+</svg>

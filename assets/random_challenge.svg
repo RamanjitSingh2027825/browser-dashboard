@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <linearGradient id="randGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2994A" />
+      <stop offset="100%" stop-color="#F2C94C" />
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="32" height="32" rx="6" fill="url(#randGrad)" transform="rotate(15 32 32)" />
+  <circle cx="26" cy="26" r="3.5" fill="#FFF" transform="rotate(15 32 32)" />
+  <circle cx="38" cy="38" r="3.5" fill="#FFF" transform="rotate(15 32 32)" />
+  <circle cx="26" cy="38" r="3.5" fill="#FFF" transform="rotate(15 32 32)" />
+  <circle cx="38" cy="26" r="3.5" fill="#FFF" transform="rotate(15 32 32)" />
+  <path d="M8 32 Q 32 6 56 32" fill="none" stroke="#FFF" stroke-width="3" stroke-dasharray="6,4" />
+</svg>

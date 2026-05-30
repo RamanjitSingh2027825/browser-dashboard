@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pomodoroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF512F" />
+      <stop offset="100%" stop-color="#DD2476" />
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="34" r="22" fill="url(#pomodoroGrad)" />
+  <path d="M32 12 V8 M26 10 C30 6 34 6 38 10" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" fill="none" />
+  <path d="M32 20 V34 L42 44" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" />
+</svg>
