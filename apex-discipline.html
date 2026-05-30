@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Discipline</title>
+    <link rel="icon" type="image/svg+xml" href="assets/apex_discipline.svg">
+    <style>
+        :root {
+            --apex-bg: #0d0d0d;
+            --apex-surface: #131313;
+            --apex-panel: #1a1a1a;
+            --apex-panel-high: #242424;
+            --apex-line: #2f2f2f;
+            --apex-line-hot: #5b4039;
+            --apex-primary: #ffb5a1;
+            --apex-primary-strong: #cc3300;
+            --apex-text: #e5e2e1;
+            --apex-muted: #a99a96;
+            --apex-soft: #e4beb4;
+            --apex-danger: #ffb4ab;
+            --apex-ok: #c8c6c5;
+            --apex-font-head: "Arial Narrow", "Helvetica Neue Condensed Bold", Impact, sans-serif;
+            --apex-font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            --apex-font-data: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            background: var(--apex-bg);
+            color: var(--apex-text);
+            font-family: var(--apex-font-body);
+            font-size: 16px;
+            letter-spacing: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .apex-app {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 264px minmax(0, 1fr);
+            background:
+                linear-gradient(120deg, rgba(255,181,161,0.06), transparent 34%),
+                var(--apex-bg);
+        }
+
+        .apex-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            padding: 28px 22px;
+            border-right: 1px solid var(--apex-line);
+            background: var(--apex-surface);
+        }
+
+        .apex-brand {
+            display: grid;
+            gap: 10px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--apex-line);
+        }
+
+        .apex-brand-mark {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--apex-line-hot);
+            background: #0f0f0f;
+            color: var(--apex-primary);
+            font-family: var(--apex-font-head);
+            font-size: 1.45rem;
+            font-weight: 900;
+        }
+
+        .apex-brand h1 {
+            color: var(--apex-primary);
+            font-family: var(--apex-font-head);
+            font-size: clamp(2.4rem, 3.8vw, 3.55rem);
+            line-height: 0.86;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .apex-brand p,
+        .apex-label {
+            color: var(--apex-muted);
+            font-family: var(--apex-font-data);
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.35;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .apex-sidebar-stat {
+            display: grid;
+            gap: 4px;
+        }
+
+        .apex-sidebar-stat strong {
+            color: var(--apex-text);
+            font-family: var(--apex-font-head);
+            font-size: 2rem;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .apex-nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .apex-nav-btn,
+        .apex-action,
+        .apex-icon-action {
+            min-height: 42px;
+            border: 1px solid var(--apex-line);
+            border-radius: 0;
+            background: transparent;
+            color: var(--apex-text);
+            font-family: var(--apex-font-data);
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+        }
+
+        .apex-nav-btn {
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px;
+            min-width: 0;
+            text-align: left;
+        }
+
+        .apex-nav-btn span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .apex-nav-btn.active,
+        .apex-action.primary {
+            border-color: var(--apex-primary);
+            background: var(--apex-primary);
+            color: #240700;
+        }
+
+        .apex-nav-btn:hover,
+        .apex-action:hover,
+        .apex-icon-action:hover {
+            border-color: var(--apex-primary);
+            background: #fff;
+            color: #0d0d0d;
+        }
+
+        .apex-sidebar-footer {
+            margin-top: auto;
+            display: grid;
+            gap: 12px;
+        }
+
+        .apex-main {
+            min-width: 0;
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr);
+        }
+
+        .apex-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 18px clamp(18px, 4vw, 54px);
+            border-bottom: 1px solid var(--apex-line);
+            background: rgba(13,13,13,0.92);
+            backdrop-filter: blur(14px);
+        }
+
+        .apex-topbar h2 {
+            font-family: var(--apex-font-head);
+            font-size: clamp(2rem, 5vw, 4.2rem);
+            line-height: 0.92;
+            text-transform: uppercase;
+            color: var(--apex-text);
+        }
+
+        .apex-topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .apex-topbar-actions .apex-input {
+            width: 86px;
+        }
+
+        .apex-shell {
+            width: min(1220px, 100%);
+            padding: clamp(18px, 4vw, 54px);
+            display: grid;
+            gap: 34px;
+        }
+
+        .apex-view {
+            display: none;
+            gap: 34px;
+        }
+
+        .apex-view.active {
+            display: grid;
+        }
+
+        .apex-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .apex-grid.cols-2 {
+            grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+            align-items: start;
+        }
+
+        .apex-grid.cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .apex-panel {
+            position: relative;
+            display: grid;
+            gap: 18px;
+            padding: 20px;
+            border: 1px solid var(--apex-line);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.025), transparent 48%),
+                var(--apex-panel);
+            overflow: hidden;
+        }
+
+        .apex-panel::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.025;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .apex-panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .apex-panel.hot {
+            border-color: var(--apex-line-hot);
+        }
+
+        .apex-panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--apex-line);
+        }
+
+        .apex-panel-title > div {
+            min-width: 0;
+        }
+
+        .apex-panel-title h3,
+        .apex-day-title,
+        .apex-section-title {
+            color: var(--apex-text);
+            font-family: var(--apex-font-head);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+            width: 100%;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .apex-day-title {
+            color: var(--apex-primary);
+            font-size: clamp(3rem, 8vw, 6.8rem);
+        }
+
+        .apex-section-title {
+            font-size: 2rem;
+        }
+
+        .apex-muted {
+            color: var(--apex-muted);
+            line-height: 1.55;
+        }
+
+        .apex-data {
+            font-family: var(--apex-font-data);
+            font-size: 1.55rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .apex-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .apex-stat {
+            display: grid;
+            gap: 8px;
+            min-height: 92px;
+            padding: 14px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+        }
+
+        .apex-stat strong {
+            font-family: var(--apex-font-data);
+            font-size: clamp(1.55rem, 4vw, 2.35rem);
+            line-height: 1;
+        }
+
+        .apex-progress {
+            display: grid;
+            gap: 12px;
+        }
+
+        .apex-progress-track {
+            display: grid;
+            grid-template-columns: repeat(30, minmax(3px, 1fr));
+            gap: 4px;
+        }
+
+        .apex-progress-block {
+            height: 16px;
+            border: 1px solid var(--apex-line);
+            background: #111;
+        }
+
+        .apex-progress-block.complete {
+            border-color: var(--apex-primary);
+            background: var(--apex-primary);
+        }
+
+        .apex-progress-block.partial {
+            border-color: var(--apex-line-hot);
+            background: linear-gradient(90deg, var(--apex-primary) var(--fill, 0%), #111 var(--fill, 0%));
+        }
+
+        .apex-day-grid {
+            display: grid;
+            grid-template-columns: repeat(10, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .apex-day-btn {
+            min-height: 62px;
+            display: grid;
+            place-items: center;
+            gap: 4px;
+            border: 1px solid var(--apex-line);
+            border-radius: 0;
+            background: #101010;
+            color: var(--apex-text);
+        }
+
+        .apex-day-btn strong {
+            font-family: var(--apex-font-data);
+            font-size: 1.05rem;
+        }
+
+        .apex-day-btn span {
+            color: var(--apex-muted);
+            font-family: var(--apex-font-data);
+            font-size: 0.65rem;
+        }
+
+        .apex-day-btn.active {
+            border-color: var(--apex-primary);
+            background: var(--apex-primary);
+            color: #230700;
+        }
+
+        .apex-day-btn.active span {
+            color: #522012;
+        }
+
+        .apex-day-btn.complete:not(.active) {
+            border-color: var(--apex-soft);
+            background: #211817;
+        }
+
+        .apex-task-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .apex-task {
+            display: grid;
+            grid-template-columns: 34px minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+            padding: 12px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+        }
+
+        .apex-task-check {
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--apex-line-hot);
+            background: transparent;
+            color: var(--apex-muted);
+            font-family: var(--apex-font-data);
+            font-weight: 900;
+        }
+
+        .apex-task.done {
+            border-color: rgba(255,181,161,0.54);
+            background: #191311;
+        }
+
+        .apex-task.done .apex-task-check {
+            border-color: var(--apex-primary);
+            background: var(--apex-primary);
+            color: #220700;
+        }
+
+        .apex-task-copy {
+            display: grid;
+            gap: 4px;
+        }
+
+        .apex-task-copy strong {
+            color: var(--apex-text);
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .apex-task-copy span {
+            color: var(--apex-muted);
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .apex-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .apex-pill {
+            padding: 8px 10px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+            color: var(--apex-soft);
+            font-family: var(--apex-font-data);
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .apex-action {
+            display: inline-grid;
+            place-items: center;
+            padding: 0 14px;
+        }
+
+        .apex-action.secondary {
+            background: transparent;
+        }
+
+        .apex-action.danger {
+            border-color: rgba(255,180,171,0.35);
+            color: var(--apex-danger);
+        }
+
+        .apex-icon-action {
+            width: 42px;
+            display: inline-grid;
+            place-items: center;
+            font-family: var(--apex-font-data);
+            font-size: 1rem;
+        }
+
+        .apex-input,
+        .apex-textarea {
+            width: 100%;
+            border: 1px solid var(--apex-line);
+            border-radius: 0;
+            background: #0d0d0d;
+            color: var(--apex-text);
+            outline: none;
+        }
+
+        .apex-input {
+            height: 42px;
+            padding: 0 12px;
+            font-family: var(--apex-font-data);
+        }
+
+        .apex-textarea {
+            min-height: 170px;
+            padding: 12px;
+            resize: vertical;
+            line-height: 1.55;
+        }
+
+        .apex-input:focus,
+        .apex-textarea:focus {
+            border-color: var(--apex-primary);
+        }
+
+        .apex-week-strip {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .apex-week-card {
+            min-height: 124px;
+            display: grid;
+            align-content: space-between;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+            color: var(--apex-text);
+            text-align: left;
+        }
+
+        .apex-week-card.active {
+            border-color: var(--apex-primary);
+            background: #1d1513;
+        }
+
+        .apex-week-card strong {
+            font-family: var(--apex-font-head);
+            font-size: 1.55rem;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .apex-training-list,
+        .apex-log-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .apex-training-card,
+        .apex-log-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+            color: var(--apex-text);
+            text-align: left;
+        }
+
+        .apex-training-card.active,
+        .apex-log-card.active {
+            border-color: var(--apex-primary);
+        }
+
+        .apex-empty {
+            padding: 18px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+            color: var(--apex-muted);
+            line-height: 1.5;
+        }
+
+        .apex-timer {
+            display: grid;
+            gap: 14px;
+            justify-items: stretch;
+            text-align: center;
+        }
+
+        .apex-timer-time {
+            padding: 24px;
+            border: 1px solid var(--apex-line);
+            background: #0d0d0d;
+            color: var(--apex-primary);
+            font-family: var(--apex-font-data);
+            font-size: clamp(2.6rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .apex-hide {
+            display: none !important;
+        }
+
+        @media (max-width: 1040px) {
+            .apex-app {
+                grid-template-columns: 1fr;
+            }
+
+            .apex-sidebar {
+                position: static;
+                height: auto;
+                padding: 16px;
+            }
+
+            .apex-brand {
+                grid-template-columns: 44px minmax(0, 1fr);
+                align-items: center;
+                padding-bottom: 16px;
+            }
+
+            .apex-brand h1 {
+                font-size: 2.35rem;
+            }
+
+            .apex-nav {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .apex-sidebar-footer {
+                display: none;
+            }
+
+            .apex-grid.cols-2,
+            .apex-grid.cols-3,
+            .apex-week-strip {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .apex-topbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .apex-topbar-actions {
+                display: grid;
+                grid-template-columns: 42px minmax(0, 1fr) 42px;
+                justify-content: stretch;
+            }
+
+            .apex-topbar-actions .apex-action {
+                grid-column: 1 / -1;
+                width: 100%;
+            }
+
+            .apex-topbar-actions .apex-input {
+                width: 100%;
+            }
+
+            .apex-panel-title {
+                flex-direction: column;
+            }
+
+            .apex-panel-title h3,
+            .apex-section-title {
+                font-size: clamp(1.55rem, 7vw, 2.15rem);
+            }
+
+            .apex-nav-btn {
+                gap: 8px;
+                padding: 0 10px;
+                font-size: 0.66rem;
+            }
+
+            .apex-shell {
+                padding: 18px;
+            }
+
+            .apex-nav {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .apex-stats,
+            .apex-day-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .apex-training-card,
+            .apex-log-card {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="apex-app">
+        <aside class="apex-sidebar">
+            <div class="apex-brand">
+                <div class="apex-brand-mark">A</div>
+                <div>
+                    <h1>Apex<br>Discipline</h1>
+                    <p>30-Day Strength & Confidence Bootcamp</p>
+                </div>
+            </div>
+
+            <div class="apex-sidebar-stat">
+                <span class="apex-label">Spartan 001</span>
+                <strong id="apex-sidebar-day">Day 1 of 30</strong>
+            </div>
+
+            <nav class="apex-nav" aria-label="Apex Discipline views">
+                <button class="apex-nav-btn active" type="button" data-apex-view="dashboard"><span>01</span><span>Dashboard</span></button>
+                <button class="apex-nav-btn" type="button" data-apex-view="mission"><span>02</span><span>Daily Mission</span></button>
+                <button class="apex-nav-btn" type="button" data-apex-view="training"><span>03</span><span>Training</span></button>
+                <button class="apex-nav-btn" type="button" data-apex-view="logs"><span>04</span><span>Logs</span></button>
+            </nav>
+
+            <div class="apex-sidebar-footer">
+                <button class="apex-action primary" type="button" id="apex-complete-all">Complete Day</button>
+                <button class="apex-action secondary" type="button" id="apex-export">Export Progress</button>
+            </div>
+        </aside>
+
+        <main class="apex-main">
+            <header class="apex-topbar">
+                <div>
+                    <p class="apex-label" id="apex-week-label">Week 1 / Foundation</p>
+                    <h2 id="apex-page-title">Mission Control</h2>
+                </div>
+                <div class="apex-topbar-actions">
+                    <button class="apex-icon-action" type="button" id="apex-prev-day" title="Previous day">-</button>
+                    <input class="apex-input" id="apex-day-input" type="number" min="1" max="30" value="1" aria-label="Current day">
+                    <button class="apex-icon-action" type="button" id="apex-next-day" title="Next day">+</button>
+                    <button class="apex-action primary" type="button" id="apex-go-mission">Deploy Mission</button>
+                </div>
+            </header>
+
+            <div class="apex-shell">
+                <section class="apex-view active" id="apex-view-dashboard">
+                    <div class="apex-grid cols-2">
+                        <section class="apex-panel hot">
+                            <div class="apex-panel-title">
+                                <div>
+                                    <p class="apex-label">Current Objective</p>
+                                    <h3 id="apex-dashboard-theme">Build the Foundation</h3>
+                                </div>
+                                <span class="apex-data" id="apex-dashboard-day">01</span>
+                            </div>
+                            <div>
+                                <h2 class="apex-day-title" id="apex-dashboard-day-title">Day 1</h2>
+                                <p class="apex-muted" id="apex-dashboard-mission">Become someone who shows up.</p>
+                            </div>
+                            <div class="apex-pill-row" id="apex-dashboard-tags"></div>
+                            <div class="apex-progress">
+                                <div class="apex-panel-title">
+                                    <span class="apex-label">30-Day Advance</span>
+                                    <span class="apex-label" id="apex-overall-label">0%</span>
+                                </div>
+                                <div class="apex-progress-track" id="apex-overall-track"></div>
+                            </div>
+                        </section>
+
+                        <section class="apex-panel">
+                            <div class="apex-panel-title">
+                                <h3>Performance</h3>
+                                <span class="apex-label">Local Progress</span>
+                            </div>
+                            <div class="apex-stats">
+                                <div class="apex-stat"><span class="apex-label">Today</span><strong id="apex-stat-today">0%</strong></div>
+                                <div class="apex-stat"><span class="apex-label">Days Clear</span><strong id="apex-stat-days">0</strong></div>
+                                <div class="apex-stat"><span class="apex-label">Streak</span><strong id="apex-stat-streak">0</strong></div>
+                                <div class="apex-stat"><span class="apex-label">Notes</span><strong id="apex-stat-notes">0</strong></div>
+                            </div>
+                            <div class="apex-week-strip" id="apex-week-strip"></div>
+                        </section>
+                    </div>
+
+                    <section class="apex-panel">
+                        <div class="apex-panel-title">
+                            <h3>Course Map</h3>
+                            <span class="apex-label">Click a day</span>
+                        </div>
+                        <div class="apex-day-grid" id="apex-day-grid"></div>
+                    </section>
+                </section>
+
+                <section class="apex-view" id="apex-view-mission">
+                    <div class="apex-grid cols-2">
+                        <section class="apex-panel hot">
+                            <div class="apex-panel-title">
+                                <div>
+                                    <p class="apex-label" id="apex-mission-kicker">Day 1 / Foundation</p>
+                                    <h3 id="apex-mission-title">Daily Mission</h3>
+                                </div>
+                                <span class="apex-data" id="apex-mission-progress">0%</span>
+                            </div>
+                            <div class="apex-task-list" id="apex-mission-tasks"></div>
+                            <div class="apex-pill-row">
+                                <button class="apex-action primary" type="button" id="apex-complete-all-main">Complete Day</button>
+                                <button class="apex-action secondary" type="button" id="apex-reset-day">Reset Day</button>
+                            </div>
+                        </section>
+
+                        <div class="apex-grid">
+                            <section class="apex-panel">
+                                <div class="apex-panel-title">
+                                    <h3>Daily Rules</h3>
+                                    <span class="apex-label">Non-negotiables</span>
+                                </div>
+                                <div class="apex-task-list" id="apex-rule-tasks"></div>
+                            </section>
+
+                            <section class="apex-panel">
+                                <div class="apex-panel-title">
+                                    <h3>3-Minute Protocol</h3>
+                                    <span class="apex-label">Daily</span>
+                                </div>
+                                <div class="apex-timer">
+                                    <div class="apex-timer-time" id="apex-timer">03:00</div>
+                                    <button class="apex-action secondary" type="button" id="apex-timer-toggle">Start Timer</button>
+                                </div>
+                                <div class="apex-task-list" id="apex-protocol-tasks"></div>
+                                <p class="apex-muted">Goal: strength, mobility, circulation, and body awareness. Stop if anything feels painful.</p>
+                            </section>
+                        </div>
+                    </div>
+
+                    <section class="apex-panel">
+                        <div class="apex-panel-title">
+                            <h3>Reflection Log</h3>
+                            <span class="apex-label" id="apex-note-status">Saved locally</span>
+                        </div>
+                        <textarea class="apex-textarea" id="apex-note" placeholder="Write the evidence. What did you complete, avoid, learn, or record today?"></textarea>
+                    </section>
+                </section>
+
+                <section class="apex-view" id="apex-view-training">
+                    <section class="apex-panel hot">
+                        <div class="apex-panel-title">
+                            <div>
+                                <p class="apex-label">Training Protocols</p>
+                                <h3 id="apex-training-title">Workout A</h3>
+                            </div>
+                            <span class="apex-data" id="apex-training-count">0</span>
+                        </div>
+                        <p class="apex-muted">The course specifies Workout A and Workout B as assigned training blocks. Use this view to see when each block appears and mark the day complete from the mission screen.</p>
+                    </section>
+                    <div class="apex-grid cols-2">
+                        <section class="apex-panel">
+                            <div class="apex-panel-title">
+                                <h3>Workout A Days</h3>
+                                <span class="apex-label">Strength block</span>
+                            </div>
+                            <div class="apex-training-list" id="apex-workout-a"></div>
+                        </section>
+                        <section class="apex-panel">
+                            <div class="apex-panel-title">
+                                <h3>Workout B Days</h3>
+                                <span class="apex-label">Strength block</span>
+                            </div>
+                            <div class="apex-training-list" id="apex-workout-b"></div>
+                        </section>
+                    </div>
+                    <section class="apex-panel">
+                        <div class="apex-panel-title">
+                            <h3>Walk / Recovery / Rest Days</h3>
+                            <span class="apex-label">Do not skip recovery</span>
+                        </div>
+                        <div class="apex-training-list" id="apex-recovery-days"></div>
+                    </section>
+                </section>
+
+                <section class="apex-view" id="apex-view-logs">
+                    <section class="apex-panel hot">
+                        <div class="apex-panel-title">
+                            <div>
+                                <p class="apex-label">Mission Archives</p>
+                                <h3>Progress & Reflection</h3>
+                            </div>
+                            <button class="apex-action danger" type="button" id="apex-reset-all">Reset All</button>
+                        </div>
+                        <div class="apex-log-list" id="apex-log-list"></div>
+                    </section>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const APEX_STORAGE_KEY = 'hub_apex_discipline';
+        const APEX_RULES = [
+            ['sleep', 'Sleep 7.5-8.5 hours', 'Protect recovery before chasing intensity.'],
+            ['water', 'Drink 2-3 liters water', 'Hydration baseline.'],
+            ['steps', 'Walk 8,000+ steps', 'Daily movement minimum.'],
+            ['workout', 'No workout skipping', 'If it is a training day, show up.'],
+            ['protein', 'Protein at every meal', 'Anchor meals around recovery.'],
+            ['language', 'No self-insulting language', 'Discipline includes how you speak to yourself.'],
+            ['scroll', 'No doom scrolling before bed', 'Protect sleep and focus.'],
+            ['reading', 'Read for 10 minutes', 'Daily mental input.'],
+            ['speaking', '2 minutes speaking practice', 'Keep the voice active every day.']
+        ];
+        const APEX_PROTOCOL = [
+            ['breath', '10 deep belly breaths', 'Slow nasal breathing if possible.'],
+            ['kegel_hold', '5 Kegels with 10 second holds', 'Controlled tension and full release.'],
+            ['kegel_fast', '5 fast Kegel contractions', 'Quick contractions, clean release.'],
+            ['hip', '1 minute hip mobility', 'Open hips, stay relaxed.']
+        ];
+        const APEX_WEEKS = [
+            { week: 1, label: 'Build the Foundation', theme: 'Become someone who shows up.', range: [1, 7] },
+            { week: 2, label: 'Build Presence', theme: 'Posture, voice, and communication create presence.', range: [8, 14] },
+            { week: 3, label: 'Build Courage', theme: 'Confidence comes from evidence, not motivation.', range: [15, 21] },
+            { week: 4, label: 'Build Identity', theme: 'Start behaving like the man you are building.', range: [22, 30] }
+        ];
+        const APEX_DAYS = [
+            { day: 1, week: 1, focus: 'Foundation', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['mind_why', 'Write why you want to become stronger', 'Be specific and honest.'],
+                ['mind_ideal', 'Describe your ideal masculine self', 'Capture body, mind, work, and presence.'],
+                ['video', 'Record a 1-minute video: Who am I today?', 'Do not watch it yet.']
+            ] },
+            { day: 2, week: 1, focus: 'Foundation', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['posture', 'Stand against wall for 2 minutes', 'Head, shoulders, and hips touching wall.'],
+                ['video', 'Record a 1-minute video: My biggest weakness', 'Keep it direct.']
+            ] },
+            { day: 3, week: 1, focus: 'Foundation', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['desk', 'Clean your desk', 'Remove visible friction.'],
+                ['laptop', 'Clean your laptop', 'Files, tabs, desktop, or downloads.'],
+                ['bedroom', 'Clean your bedroom', 'Your environment should match the mission.'],
+                ['video', 'Record a 1-minute video: What frustrates me?', 'Name it clearly.']
+            ] },
+            { day: 4, week: 1, focus: 'Foundation', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['walk', 'Walk 20 minutes with no phone', 'Observe surroundings.'],
+                ['video', 'Record a 1-minute video: My future career', 'Talk without over-editing.']
+            ] },
+            { day: 5, week: 1, focus: 'Foundation', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['eye_contact', 'Make eye contact with 5 people', 'Brief, calm, respectful.'],
+                ['video', 'Record a 1-minute video: One thing I admire in others', 'Notice strength outside yourself.']
+            ] },
+            { day: 6, week: 1, focus: 'Recovery', tasks: [
+                ['recovery', 'Active recovery: 30-minute walk', 'Keep it easy.'],
+                ['reflection_done', 'Journal what you completed', 'Write the facts.'],
+                ['reflection_avoid', 'Journal what you avoided', 'No judgement. Just data.']
+            ] },
+            { day: 7, week: 1, focus: 'Review', tasks: [
+                ['rest', 'Rest', 'Let the body absorb the week.'],
+                ['review_videos', 'Review all videos', 'Notice voice, energy, and confidence without judgement.']
+            ] },
+            { day: 8, week: 2, focus: 'Presence', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['voice', 'Read aloud for 5 minutes', 'Slowly. Clean articulation.']
+            ] },
+            { day: 9, week: 2, focus: 'Presence', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['communication', 'Speak to one stranger', 'A simple good morning counts.']
+            ] },
+            { day: 10, week: 2, focus: 'Presence', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['grooming_hair', 'Upgrade hair', 'Small grooming improvement.'],
+                ['grooming_beard', 'Upgrade beard', 'Trim, clean, or define.'],
+                ['grooming_clothes', 'Upgrade clothes', 'Make one visible improvement.']
+            ] },
+            { day: 11, week: 2, focus: 'Presence', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['posture', 'Sit upright all day', 'No slouching.']
+            ] },
+            { day: 12, week: 2, focus: 'Presence', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['video', 'Record a 2-minute video: What I learned this week', 'Capture the lesson.']
+            ] },
+            { day: 13, week: 2, focus: 'Reflection', tasks: [
+                ['walk', 'Walk 30 minutes', 'Steady pace.'],
+                ['reflection', 'Write what makes a man trustworthy', 'Define it in your own words.']
+            ] },
+            { day: 14, week: 2, focus: 'Review', tasks: [
+                ['rest', 'Rest', 'Recover deliberately.'],
+                ['review', 'Review progress', 'Look at behavior, not mood.'],
+                ['photo_front', 'Take front body photo', 'Private record.'],
+                ['photo_side', 'Take side body photo', 'Private record.']
+            ] },
+            { day: 15, week: 3, focus: 'Courage', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['post_online', 'Post something useful online', 'LinkedIn, Twitter, Reddit, or any useful post.']
+            ] },
+            { day: 16, week: 3, focus: 'Courage', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['video', 'Record a 3-minute video with no script', 'Let the mind organize itself.']
+            ] },
+            { day: 17, week: 3, focus: 'Courage', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['learning', 'Watch one communication video', 'Choose something practical.'],
+                ['notes', 'Take notes from the video', 'Extract one usable behavior.']
+            ] },
+            { day: 18, week: 3, focus: 'Courage', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['meeting', 'Ask one question in a meeting', 'Clear, respectful, useful.']
+            ] },
+            { day: 19, week: 3, focus: 'Courage', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['clothes', 'Wear clothes that make you feel sharp', 'Choose presence deliberately.']
+            ] },
+            { day: 20, week: 3, focus: 'Reflection', tasks: [
+                ['walk', 'Walk', 'Steady recovery movement.'],
+                ['reflection', 'Write what fears control you', 'Name them to reduce their power.']
+            ] },
+            { day: 21, week: 3, focus: 'Review', tasks: [
+                ['rest', 'Rest', 'Recover.'],
+                ['review_videos', 'Review all recorded videos', 'Notice progress.']
+            ] },
+            { day: 22, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['values', 'Write 5 values that define you', 'Examples: discipline, integrity, courage, curiosity, reliability.']
+            ] },
+            { day: 23, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['ideas', 'Write 10 YouTube video ideas', 'Do not judge quality.']
+            ] },
+            { day: 24, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['video', 'Record a private YouTube-style video for 3 minutes', 'Practice creator presence.']
+            ] },
+            { day: 25, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['story', 'Tell a story to someone', 'Practice sequencing and delivery.']
+            ] },
+            { day: 26, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['apps', 'Delete unused apps', 'Remove easy distractions.'],
+                ['distractions', 'Delete digital distractions', 'Reduce impulse loops.'],
+                ['junk', 'Clean junk files', 'Clear visual and digital clutter.']
+            ] },
+            { day: 27, week: 4, focus: 'Identity', tasks: [
+                ['physical', 'Workout A', 'Complete the assigned strength session.'],
+                ['future', 'Write who you want to become in 1 year', 'Make it concrete.']
+            ] },
+            { day: 28, week: 4, focus: 'Reflection', tasks: [
+                ['walk', 'Walk 30 minutes', 'No phone if possible.'],
+                ['thinking', 'Think only about what kind of life you are building', 'No multitasking.']
+            ] },
+            { day: 29, week: 4, focus: 'Final Recording', tasks: [
+                ['physical', 'Workout B', 'Complete the assigned strength session.'],
+                ['video', 'Record a 5-minute video: What changed in 30 days?', 'Compare behavior, confidence, energy.']
+            ] },
+            { day: 30, week: 4, focus: 'Review', tasks: [
+                ['photo', 'Take body photos', 'Private record.'],
+                ['watch_day1', 'Watch Day 1 video', 'Observe without judgement.'],
+                ['watch_day29', 'Watch Day 29 video', 'Notice the contrast.'],
+                ['improved', 'Write what improved', 'Evidence only.'],
+                ['weak', 'Write what remains weak', 'Name next targets.'],
+                ['next', 'Write what is next', 'Create the next move.']
+            ] }
+        ];
+
+        let apexState = loadApexState();
+        let apexView = 'dashboard';
+        let apexTimer = null;
+        let apexTimerRemaining = 180;
+
+        function loadApexState() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(APEX_STORAGE_KEY) || '{}');
+                return normalizeApexState(raw);
+            } catch (err) {
+                return normalizeApexState({});
+            }
+        }
+
+        function normalizeApexState(raw) {
+            const state = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+            state.currentDay = Math.max(1, Math.min(30, Number(state.currentDay) || 1));
+            state.completed = state.completed && typeof state.completed === 'object' && !Array.isArray(state.completed) ? state.completed : {};
+            state.notes = state.notes && typeof state.notes === 'object' && !Array.isArray(state.notes) ? state.notes : {};
+            return state;
+        }
+
+        function saveApexState() {
+            apexState = normalizeApexState(apexState);
+            localStorage.setItem(APEX_STORAGE_KEY, JSON.stringify(apexState));
+        }
+
+        function getDay(day = apexState.currentDay) {
+            return APEX_DAYS.find(item => item.day === day) || APEX_DAYS[0];
+        }
+
+        function getWeek(day = apexState.currentDay) {
+            return APEX_WEEKS.find(week => day >= week.range[0] && day <= week.range[1]) || APEX_WEEKS[0];
+        }
+
+        function getTaskId(day, group, taskId) {
+            return `day_${day}:${group}:${taskId}`;
+        }
+
+        function getCompletedSet(day = apexState.currentDay) {
+            const values = Array.isArray(apexState.completed[day]) ? apexState.completed[day] : [];
+            return new Set(values);
+        }
+
+        function getAllTasks(day = apexState.currentDay) {
+            const current = getDay(day);
+            return [
+                ...current.tasks.map(task => ({ group: 'mission', id: task[0], title: task[1], detail: task[2] || '' })),
+                ...APEX_RULES.map(task => ({ group: 'rule', id: task[0], title: task[1], detail: task[2] || '' })),
+                ...APEX_PROTOCOL.map(task => ({ group: 'protocol', id: task[0], title: task[1], detail: task[2] || '' }))
+            ];
+        }
+
+        function getDayCompletion(day = apexState.currentDay) {
+            const tasks = getAllTasks(day);
+            const done = getCompletedSet(day);
+            if (!tasks.length) return 0;
+            const complete = tasks.filter(task => done.has(getTaskId(day, task.group, task.id))).length;
+            return Math.round((complete / tasks.length) * 100);
+        }
+
+        function getOverallCompletion() {
+            const total = APEX_DAYS.length * 100;
+            const completed = APEX_DAYS.reduce((sum, day) => sum + getDayCompletion(day.day), 0);
+            return Math.round((completed / total) * 100);
+        }
+
+        function setCurrentDay(day) {
+            apexState.currentDay = Math.max(1, Math.min(30, Number(day) || 1));
+            saveApexState();
+            renderApex();
+        }
+
+        function setApexView(view) {
+            if (!['dashboard', 'mission', 'training', 'logs'].includes(view)) return;
+            apexView = view;
+            renderApex();
+        }
+
+        function toggleTask(day, group, taskId) {
+            const id = getTaskId(day, group, taskId);
+            const done = getCompletedSet(day);
+            if (done.has(id)) done.delete(id);
+            else done.add(id);
+            apexState.completed[day] = Array.from(done);
+            saveApexState();
+            renderApex();
+        }
+
+        function completeCurrentDay() {
+            const day = apexState.currentDay;
+            apexState.completed[day] = getAllTasks(day).map(task => getTaskId(day, task.group, task.id));
+            saveApexState();
+            renderApex();
+        }
+
+        function resetCurrentDay() {
+            const day = apexState.currentDay;
+            delete apexState.completed[day];
+            saveApexState();
+            renderApex();
+        }
+
+        function renderTaskList(holderId, tasks, day) {
+            const holder = document.getElementById(holderId);
+            const done = getCompletedSet(day);
+            holder.innerHTML = tasks.map(task => {
+                const fullId = getTaskId(day, task.group, task.id);
+                const isDone = done.has(fullId);
+                return `
+                    <button class="apex-task ${isDone ? 'done' : ''}" type="button" data-apex-task-day="${day}" data-apex-task-group="${task.group}" data-apex-task-id="${task.id}">
+                        <span class="apex-task-check">${isDone ? 'X' : ''}</span>
+                        <span class="apex-task-copy">
+                            <strong>${escapeApex(task.title)}</strong>
+                            ${task.detail ? `<span>${escapeApex(task.detail)}</span>` : ''}
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderDashboard() {
+            const current = getDay();
+            const week = getWeek();
+            document.getElementById('apex-dashboard-theme').textContent = week.label;
+            document.getElementById('apex-dashboard-day').textContent = String(current.day).padStart(2, '0');
+            document.getElementById('apex-dashboard-day-title').textContent = `Day ${current.day}`;
+            document.getElementById('apex-dashboard-mission').textContent = week.theme;
+            document.getElementById('apex-dashboard-tags').innerHTML = [
+                `Week ${week.week}`,
+                current.focus,
+                getPrimaryBlock(current)
+            ].map(tag => `<span class="apex-pill">${escapeApex(tag)}</span>`).join('');
+
+            const overall = getOverallCompletion();
+            document.getElementById('apex-overall-label').textContent = `${overall}%`;
+            document.getElementById('apex-overall-track').innerHTML = APEX_DAYS.map(day => {
+                const completion = getDayCompletion(day.day);
+                const status = completion >= 100 ? 'complete' : completion > 0 ? 'partial' : '';
+                return `<span class="apex-progress-block ${status}" style="--fill:${completion}%"></span>`;
+            }).join('');
+
+            const todayCompletion = getDayCompletion();
+            const daysClear = APEX_DAYS.filter(day => getDayCompletion(day.day) >= 100).length;
+            const notes = Object.values(apexState.notes).filter(note => String(note || '').trim()).length;
+            document.getElementById('apex-stat-today').textContent = `${todayCompletion}%`;
+            document.getElementById('apex-stat-days').textContent = daysClear;
+            document.getElementById('apex-stat-streak').textContent = getCompletionStreak();
+            document.getElementById('apex-stat-notes').textContent = notes;
+
+            document.getElementById('apex-week-strip').innerHTML = APEX_WEEKS.map(item => `
+                <button class="apex-week-card ${item.week === week.week ? 'active' : ''}" type="button" data-apex-week="${item.week}">
+                    <span class="apex-label">Week ${item.week}</span>
+                    <strong>${escapeApex(item.label)}</strong>
+                    <span class="apex-muted">${escapeApex(item.theme)}</span>
+                </button>
+            `).join('');
+
+            document.getElementById('apex-day-grid').innerHTML = APEX_DAYS.map(day => {
+                const completion = getDayCompletion(day.day);
+                return `
+                    <button class="apex-day-btn ${day.day === current.day ? 'active' : ''} ${completion >= 100 ? 'complete' : ''}" type="button" data-apex-day="${day.day}">
+                        <strong>${String(day.day).padStart(2, '0')}</strong>
+                        <span>${completion}%</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderMission() {
+            const current = getDay();
+            const week = getWeek();
+            const completion = getDayCompletion();
+            document.getElementById('apex-mission-kicker').textContent = `Day ${current.day} / ${current.focus}`;
+            document.getElementById('apex-mission-title').textContent = getPrimaryBlock(current);
+            document.getElementById('apex-mission-progress').textContent = `${completion}%`;
+            renderTaskList('apex-mission-tasks', current.tasks.map(task => ({ group: 'mission', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
+            renderTaskList('apex-rule-tasks', APEX_RULES.map(task => ({ group: 'rule', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
+            renderTaskList('apex-protocol-tasks', APEX_PROTOCOL.map(task => ({ group: 'protocol', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
+            document.getElementById('apex-note').value = apexState.notes[current.day] || '';
+            document.getElementById('apex-week-label').textContent = `Week ${week.week} / ${week.label}`;
+        }
+
+        function renderTraining() {
+            const current = getDay();
+            const aDays = APEX_DAYS.filter(day => getPrimaryBlock(day) === 'Workout A');
+            const bDays = APEX_DAYS.filter(day => getPrimaryBlock(day) === 'Workout B');
+            const recoveryDays = APEX_DAYS.filter(day => !['Workout A', 'Workout B'].includes(getPrimaryBlock(day)));
+            document.getElementById('apex-training-title').textContent = getPrimaryBlock(current);
+            document.getElementById('apex-training-count').textContent = `${aDays.length + bDays.length}`;
+            renderTrainingList('apex-workout-a', aDays);
+            renderTrainingList('apex-workout-b', bDays);
+            renderTrainingList('apex-recovery-days', recoveryDays);
+        }
+
+        function renderTrainingList(holderId, days) {
+            document.getElementById(holderId).innerHTML = days.map(day => `
+                <button class="apex-training-card ${day.day === apexState.currentDay ? 'active' : ''}" type="button" data-apex-day="${day.day}" data-apex-open-mission="1">
+                    <span>
+                        <strong>Day ${day.day}: ${escapeApex(getPrimaryBlock(day))}</strong>
+                        <span class="apex-muted">${escapeApex(day.focus)} / ${getDayCompletion(day.day)}% complete</span>
+                    </span>
+                    <span class="apex-pill">Open</span>
+                </button>
+            `).join('');
+        }
+
+        function renderLogs() {
+            const rows = APEX_DAYS.map(day => {
+                const note = String(apexState.notes[day.day] || '').trim();
+                const completion = getDayCompletion(day.day);
+                return { day, note, completion };
+            }).filter(item => item.note || item.completion > 0);
+            document.getElementById('apex-log-list').innerHTML = rows.length ? rows.map(item => `
+                <button class="apex-log-card ${item.day.day === apexState.currentDay ? 'active' : ''}" type="button" data-apex-day="${item.day.day}" data-apex-open-mission="1">
+                    <span>
+                        <strong>Day ${item.day.day}: ${escapeApex(getPrimaryBlock(item.day))}</strong>
+                        <span class="apex-muted">${escapeApex(item.note || 'No written reflection yet.')}</span>
+                    </span>
+                    <span class="apex-pill">${item.completion}%</span>
+                </button>
+            `).join('') : '<div class="apex-empty">No mission activity yet. Complete tasks or write a reflection to build the archive.</div>';
+        }
+
+        function renderApex() {
+            const current = getDay();
+            const week = getWeek();
+            document.title = `Apex Discipline - Day ${current.day}`;
+            document.getElementById('apex-sidebar-day').textContent = `Day ${current.day} of 30`;
+            document.getElementById('apex-day-input').value = current.day;
+            document.getElementById('apex-page-title').textContent = {
+                dashboard: 'Mission Control',
+                mission: 'Daily Mission',
+                training: 'Training Protocols',
+                logs: 'Mission Logs'
+            }[apexView];
+            document.getElementById('apex-week-label').textContent = `Week ${week.week} / ${week.label}`;
+            document.querySelectorAll('[data-apex-view]').forEach(button => button.classList.toggle('active', button.dataset.apexView === apexView));
+            document.querySelectorAll('.apex-view').forEach(section => section.classList.toggle('active', section.id === `apex-view-${apexView}`));
+            renderDashboard();
+            renderMission();
+            renderTraining();
+            renderLogs();
+        }
+
+        function getPrimaryBlock(day) {
+            const titles = day.tasks.map(task => task[1]);
+            if (titles.includes('Workout A')) return 'Workout A';
+            if (titles.includes('Workout B')) return 'Workout B';
+            if (titles.some(title => title.toLowerCase().includes('walk'))) return 'Walk';
+            if (titles.some(title => title.toLowerCase().includes('rest'))) return 'Rest';
+            return day.focus;
+        }
+
+        function getCompletionStreak() {
+            let streak = 0;
+            for (const day of APEX_DAYS) {
+                if (getDayCompletion(day.day) >= 100) streak += 1;
+                else if (day.day <= apexState.currentDay) streak = 0;
+            }
+            return streak;
+        }
+
+        function escapeApex(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function exportApexProgress() {
+            const blob = new Blob([JSON.stringify(apexState, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `apex-discipline-progress-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function updateTimerLabel() {
+            const minutes = Math.floor(apexTimerRemaining / 60);
+            const seconds = apexTimerRemaining % 60;
+            document.getElementById('apex-timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('apex-timer-toggle').textContent = apexTimer ? 'Pause Timer' : apexTimerRemaining === 180 ? 'Start Timer' : 'Resume Timer';
+        }
+
+        function toggleTimer() {
+            if (apexTimer) {
+                clearInterval(apexTimer);
+                apexTimer = null;
+                updateTimerLabel();
+                return;
+            }
+            apexTimer = setInterval(() => {
+                apexTimerRemaining -= 1;
+                if (apexTimerRemaining <= 0) {
+                    clearInterval(apexTimer);
+                    apexTimer = null;
+                    apexTimerRemaining = 180;
+                    APEX_PROTOCOL.forEach(task => {
+                        const done = getCompletedSet(apexState.currentDay);
+                        done.add(getTaskId(apexState.currentDay, 'protocol', task[0]));
+                        apexState.completed[apexState.currentDay] = Array.from(done);
+                    });
+                    saveApexState();
+                    renderApex();
+                }
+                updateTimerLabel();
+            }, 1000);
+            updateTimerLabel();
+        }
+
+        document.addEventListener('click', event => {
+            const nav = event.target.closest('[data-apex-view]');
+            if (nav) setApexView(nav.dataset.apexView);
+
+            const dayButton = event.target.closest('[data-apex-day]');
+            if (dayButton) {
+                setCurrentDay(dayButton.dataset.apexDay);
+                if (dayButton.dataset.apexOpenMission) setApexView('mission');
+            }
+
+            const weekButton = event.target.closest('[data-apex-week]');
+            if (weekButton) {
+                const week = APEX_WEEKS.find(item => item.week === Number(weekButton.dataset.apexWeek));
+                if (week) setCurrentDay(week.range[0]);
+            }
+
+            const taskButton = event.target.closest('[data-apex-task-id]');
+            if (taskButton) {
+                toggleTask(Number(taskButton.dataset.apexTaskDay), taskButton.dataset.apexTaskGroup, taskButton.dataset.apexTaskId);
+            }
+        });
+
+        document.getElementById('apex-prev-day').addEventListener('click', () => setCurrentDay(apexState.currentDay - 1));
+        document.getElementById('apex-next-day').addEventListener('click', () => setCurrentDay(apexState.currentDay + 1));
+        document.getElementById('apex-day-input').addEventListener('change', event => setCurrentDay(event.target.value));
+        document.getElementById('apex-go-mission').addEventListener('click', () => setApexView('mission'));
+        document.getElementById('apex-complete-all').addEventListener('click', completeCurrentDay);
+        document.getElementById('apex-complete-all-main').addEventListener('click', completeCurrentDay);
+        document.getElementById('apex-reset-day').addEventListener('click', resetCurrentDay);
+        document.getElementById('apex-export').addEventListener('click', exportApexProgress);
+        document.getElementById('apex-timer-toggle').addEventListener('click', toggleTimer);
+        document.getElementById('apex-note').addEventListener('input', event => {
+            apexState.notes[apexState.currentDay] = event.target.value;
+            saveApexState();
+            document.getElementById('apex-note-status').textContent = 'Saved';
+        });
+        document.getElementById('apex-reset-all').addEventListener('click', () => {
+            if (!window.confirm('Reset all Apex Discipline progress?')) return;
+            localStorage.removeItem(APEX_STORAGE_KEY);
+            apexState = loadApexState();
+            renderApex();
+        });
+
+        updateTimerLabel();
+        renderApex();
+    </script>
+</body>
+</html>

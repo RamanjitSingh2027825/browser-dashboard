@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Apex Discipline">
+  <rect width="64" height="64" fill="#121212"/>
+  <path d="M32 9 52 53H40l-3-8H27l-3 8H12L32 9Zm0 15-5 13h10l-5-13Z" fill="#ffb5a1"/>
+  <path d="M14 53h36" stroke="#e5e2e1" stroke-width="4"/>
+  <path d="M20 8h24" stroke="#353534" stroke-width="4"/>
+</svg>

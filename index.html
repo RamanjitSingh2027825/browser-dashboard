@@ -8242,6 +8242,16 @@
             return `assets/${fileName}.svg`;
         }
 
+        function getApexDisciplineUrl() {
+            return new URL('apex-discipline.html', window.location.href).toString();
+        }
+
+        function openApexDisciplineTab() {
+            const apexUrl = getApexDisciplineUrl();
+            const opened = window.open(apexUrl, '_blank', 'noopener');
+            if (!opened) window.location.href = apexUrl;
+        }
+
         function renderApps() {
             const grid = document.getElementById('apps-grid');
             const toolsGrid = document.getElementById('tools-grid');
@@ -8250,6 +8260,7 @@
 
             const tools = [
                 { name: 'Pomodoro', meta: 'Focus timer', logo: getToolLogoSource('pomodoro'), fallback: '25', accent: '#f8fafc', action: openPomodoro },
+                { name: 'Apex Discipline', meta: '30-day course', logo: getToolLogoSource('apex_discipline'), fallback: 'A', accent: '#ffb5a1', action: openApexDisciplineTab },
                 { name: 'Clip Mix', meta: 'English and ideas', logo: getToolLogoSource('clip_mix'), fallback: '▶', accent: '#38bdf8', action: openClipMixTab },
                 { name: 'Math Challenger', meta: 'Mental math sprint', logo: getToolLogoSource('math_challenger'), fallback: '×', accent: '#a3e635', action: openMathChallenger },
                 { name: 'Update Templates', meta: 'Reusable work notes', logo: getToolLogoSource('update_templates'), fallback: 'T', accent: '#f472b6', action: openTemplates }
@@ -8433,6 +8444,7 @@
                 hub_wallpaper_state: wallpaperState,
                 hub_custom_wallpapers: customWallpapers,
                 hub_pomodoro: getPomodoroBackup(),
+                hub_apex_discipline: JSON.parse(localStorage.getItem('hub_apex_discipline') || 'null'),
                 hub_clip_mix: clipState,
                 hub_math_challenger: getMathBackup(),
                 hub_random_challenge: getChallengeBackup(),
@@ -8465,6 +8477,7 @@
                     if (data.hub_wallpaper_state) localStorage.setItem(WALLPAPER_STATE_KEY, JSON.stringify(data.hub_wallpaper_state));
                     if (data.hub_custom_wallpapers) localStorage.setItem(WALLPAPER_CUSTOM_KEY, JSON.stringify(data.hub_custom_wallpapers));
                     if (data.hub_pomodoro) localStorage.setItem(POMODORO_STORAGE_KEY, JSON.stringify(data.hub_pomodoro));
+                    if (data.hub_apex_discipline) localStorage.setItem('hub_apex_discipline', JSON.stringify(data.hub_apex_discipline));
                     if (data.hub_clip_mix || data.hub_clip_hour) {
                         localStorage.setItem(CLIP_STORAGE_KEY, JSON.stringify(data.hub_clip_mix || data.hub_clip_hour));
                     }
@@ -8632,6 +8645,9 @@
             if ('pomodoro timer focus'.includes(query)) {
                 currentCmdItems.push({ type: 'pomodoro' });
             }
+            if ('apex discipline masculine strength confidence bootcamp course mission control training'.includes(query)) {
+                currentCmdItems.push({ type: 'apex' });
+            }
             if ('clip mix clip of hour english learning facts knowledge video'.includes(query)) {
                 currentCmdItems.push({ type: 'clip' });
             }
@@ -8659,6 +8675,8 @@
                     li.innerHTML = `<img src="${getIconSource(item.data)}" class="cmd-icon"><span class="cmd-text">${item.data.name}</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'pomodoro') {
                     li.innerHTML = `<div class="cmd-icon">⏱</div><span class="cmd-text">Pomodoro Timer</span><span class="cmd-badge">App</span>`;
+                } else if (item.type === 'apex') {
+                    li.innerHTML = `<div class="cmd-icon">A</div><span class="cmd-text">Apex Discipline</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'clip') {
                     li.innerHTML = `<div class="cmd-icon">▶</div><span class="cmd-text">Clip Mix</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'math') {
@@ -8691,6 +8709,7 @@
         function executeCmdItem(item) {
             if (item.type === 'app') window.open(item.data.url, '_blank');
             else if (item.type === 'pomodoro') openPomodoro();
+            else if (item.type === 'apex') openApexDisciplineTab();
             else if (item.type === 'clip') openClipMixTab();
             else if (item.type === 'math') openMathChallenger();
             else if (item.type === 'challenge') openRandomChallenge();
