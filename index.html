@@ -8252,8 +8252,6 @@
                 { name: 'Pomodoro', meta: 'Focus timer', logo: getToolLogoSource('pomodoro'), fallback: '25', accent: '#f8fafc', action: openPomodoro },
                 { name: 'Clip Mix', meta: 'English and ideas', logo: getToolLogoSource('clip_mix'), fallback: '▶', accent: '#38bdf8', action: openClipMixTab },
                 { name: 'Math Challenger', meta: 'Mental math sprint', logo: getToolLogoSource('math_challenger'), fallback: '×', accent: '#a3e635', action: openMathChallenger },
-                { name: 'Random Challenge', meta: 'Tiny daily action', logo: getToolLogoSource('random_challenge'), fallback: 'GO', accent: '#f59e0b', action: openRandomChallenge },
-                { name: 'Human Link', meta: 'Public openings', logo: getToolLogoSource('human_link'), fallback: 'HI', accent: '#22c55e', action: openHumanLink },
                 { name: 'Update Templates', meta: 'Reusable work notes', logo: getToolLogoSource('update_templates'), fallback: 'T', accent: '#f472b6', action: openTemplates }
             ];
 
@@ -8640,12 +8638,6 @@
             if ('math challenger quick fire percentage real life estimation logic'.includes(query)) {
                 currentCmdItems.push({ type: 'math' });
             }
-            if ('random challenge daily tiny english focus communication kindness learning health'.includes(query)) {
-                currentCmdItems.push({ type: 'challenge' });
-            }
-            if ('human link public openings strangers conversation english practice friends study accountability feedback career'.includes(query)) {
-                currentCmdItems.push({ type: 'human' });
-            }
             if ('update templates daily targets daily updates meeting minutes'.includes(query)) {
                 currentCmdItems.push({ type: 'templates' });
             }
@@ -8671,10 +8663,6 @@
                     li.innerHTML = `<div class="cmd-icon">▶</div><span class="cmd-text">Clip Mix</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'math') {
                     li.innerHTML = `<div class="cmd-icon">×</div><span class="cmd-text">Math Challenger</span><span class="cmd-badge">App</span>`;
-                } else if (item.type === 'challenge') {
-                    li.innerHTML = `<div class="cmd-icon">GO</div><span class="cmd-text">Random Challenge</span><span class="cmd-badge">App</span>`;
-                } else if (item.type === 'human') {
-                    li.innerHTML = `<div class="cmd-icon">HI</div><span class="cmd-text">Human Link</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'templates') {
                     li.innerHTML = `<div class="cmd-icon">T</div><span class="cmd-text">Update Templates</span><span class="cmd-badge">App</span>`;
                 } else if (item.type === 'todo') {
