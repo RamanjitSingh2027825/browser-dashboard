@@ -86,6 +86,7 @@
         .apex-brand {
             display: grid;
             gap: 10px;
+            min-width: 0;
             padding-bottom: 28px;
             border-bottom: 1px solid var(--apex-line);
         }
@@ -104,12 +105,16 @@
         }
 
         .apex-brand h1 {
+            max-width: 100%;
+            min-width: 0;
             color: var(--apex-primary);
             font-family: var(--apex-font-head);
-            font-size: clamp(2.4rem, 3.8vw, 3.55rem);
-            line-height: 0.86;
+            font-size: clamp(2.15rem, 2.6vw, 2.6rem);
+            line-height: 0.9;
             text-transform: uppercase;
             letter-spacing: 0;
+            overflow: hidden;
+            overflow-wrap: break-word;
         }
 
         .apex-brand p,
@@ -216,11 +221,13 @@
         }
 
         .apex-topbar h2 {
+            max-width: 100%;
             font-family: var(--apex-font-head);
             font-size: clamp(2rem, 5vw, 4.2rem);
             line-height: 0.92;
             text-transform: uppercase;
             color: var(--apex-text);
+            overflow-wrap: anywhere;
         }
 
         .apex-topbar-actions {
@@ -596,7 +603,7 @@
         .apex-training-card,
         .apex-log-card {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-columns: minmax(0, 1fr) auto auto;
             gap: 14px;
             align-items: center;
             padding: 14px;
@@ -659,7 +666,7 @@
             }
 
             .apex-brand h1 {
-                font-size: 2.35rem;
+                font-size: 2.25rem;
             }
 
             .apex-nav {
@@ -880,34 +887,18 @@
                         <div class="apex-panel-title">
                             <div>
                                 <p class="apex-label">Training Protocols</p>
-                                <h3 id="apex-training-title">Workout A</h3>
+                                <h3 id="apex-training-title">30-Day Plan</h3>
                             </div>
                             <span class="apex-data" id="apex-training-count">0</span>
                         </div>
-                        <p class="apex-muted">The course specifies Workout A and Workout B as assigned training blocks. Use this view to see when each block appears and mark the day complete from the mission screen.</p>
+                        <p class="apex-muted">A single day-by-day course map. Open any day to view and complete its actual mission plan.</p>
                     </section>
-                    <div class="apex-grid cols-2">
-                        <section class="apex-panel">
-                            <div class="apex-panel-title">
-                                <h3>Workout A Days</h3>
-                                <span class="apex-label">Strength block</span>
-                            </div>
-                            <div class="apex-training-list" id="apex-workout-a"></div>
-                        </section>
-                        <section class="apex-panel">
-                            <div class="apex-panel-title">
-                                <h3>Workout B Days</h3>
-                                <span class="apex-label">Strength block</span>
-                            </div>
-                            <div class="apex-training-list" id="apex-workout-b"></div>
-                        </section>
-                    </div>
                     <section class="apex-panel">
                         <div class="apex-panel-title">
-                            <h3>Walk / Recovery / Rest Days</h3>
-                            <span class="apex-label">Do not skip recovery</span>
+                            <h3>Course Days</h3>
+                            <span class="apex-label">Day 1-30</span>
                         </div>
-                        <div class="apex-training-list" id="apex-recovery-days"></div>
+                        <div class="apex-training-list" id="apex-training-days"></div>
                     </section>
                 </section>
 
@@ -1096,7 +1087,7 @@
         ];
 
         let apexState = loadApexState();
-        let apexView = 'dashboard';
+        let apexView = getInitialApexView();
         let apexTimer = null;
         let apexTimerRemaining = 180;
 
@@ -1171,7 +1162,15 @@
         function setApexView(view) {
             if (!['dashboard', 'mission', 'training', 'logs'].includes(view)) return;
             apexView = view;
+            if (window.location.hash !== `#${view}`) {
+                history.replaceState(null, '', `#${view}`);
+            }
             renderApex();
+        }
+
+        function getInitialApexView() {
+            const view = window.location.hash.replace(/^#/, '');
+            return ['dashboard', 'mission', 'training', 'logs'].includes(view) ? view : 'dashboard';
         }
 
         function toggleTask(day, group, taskId) {
@@ -1279,15 +1278,9 @@
         }
 
         function renderTraining() {
-            const current = getDay();
-            const aDays = APEX_DAYS.filter(day => getPrimaryBlock(day) === 'Workout A');
-            const bDays = APEX_DAYS.filter(day => getPrimaryBlock(day) === 'Workout B');
-            const recoveryDays = APEX_DAYS.filter(day => !['Workout A', 'Workout B'].includes(getPrimaryBlock(day)));
-            document.getElementById('apex-training-title').textContent = getPrimaryBlock(current);
-            document.getElementById('apex-training-count').textContent = `${aDays.length + bDays.length}`;
-            renderTrainingList('apex-workout-a', aDays);
-            renderTrainingList('apex-workout-b', bDays);
-            renderTrainingList('apex-recovery-days', recoveryDays);
+            document.getElementById('apex-training-title').textContent = '30-Day Plan';
+            document.getElementById('apex-training-count').textContent = '30';
+            renderTrainingList('apex-training-days', APEX_DAYS);
         }
 
         function renderTrainingList(holderId, days) {
@@ -1295,8 +1288,9 @@
                 <button class="apex-training-card ${day.day === apexState.currentDay ? 'active' : ''}" type="button" data-apex-day="${day.day}" data-apex-open-mission="1">
                     <span>
                         <strong>Day ${day.day}: ${escapeApex(getPrimaryBlock(day))}</strong>
-                        <span class="apex-muted">${escapeApex(day.focus)} / ${getDayCompletion(day.day)}% complete</span>
+                        <span class="apex-muted">${escapeApex(day.focus)} / ${escapeApex(getWeek(day.day).label)}</span>
                     </span>
+                    <span class="apex-pill">${getDayCompletion(day.day)}%</span>
                     <span class="apex-pill">Open</span>
                 </button>
             `).join('');
@@ -1452,6 +1446,10 @@
             if (!window.confirm('Reset all Apex Discipline progress?')) return;
             localStorage.removeItem(APEX_STORAGE_KEY);
             apexState = loadApexState();
+            renderApex();
+        });
+        window.addEventListener('hashchange', () => {
+            apexView = getInitialApexView();
             renderApex();
         });
 
