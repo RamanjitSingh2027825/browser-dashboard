@@ -446,6 +446,7 @@
         }
 
         .apex-task {
+            width: 100%;
             display: grid;
             grid-template-columns: 34px minmax(0, 1fr);
             gap: 12px;
@@ -453,6 +454,9 @@
             padding: 12px;
             border: 1px solid var(--apex-line);
             background: #101010;
+            color: var(--apex-text);
+            text-align: left;
+            white-space: normal;
         }
 
         .apex-task-check {
@@ -479,20 +483,34 @@
         }
 
         .apex-task-copy {
+            max-width: 100%;
+            min-width: 0;
             display: grid;
             gap: 4px;
+            text-align: left;
+            white-space: normal;
         }
 
         .apex-task-copy strong {
+            display: block;
+            max-width: 100%;
             color: var(--apex-text);
             font-weight: 800;
             line-height: 1.35;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .apex-task-copy span {
+            display: block;
+            max-width: 100%;
             color: var(--apex-muted);
             font-size: 0.9rem;
             line-height: 1.45;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .apex-pill-row {
@@ -618,6 +636,49 @@
             border-color: var(--apex-primary);
         }
 
+        .apex-workout-plan {
+            display: grid;
+            gap: 14px;
+        }
+
+        .apex-workout-stage {
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border: 1px solid var(--apex-line);
+            background: #101010;
+        }
+
+        .apex-workout-stage-head {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--apex-line);
+        }
+
+        .apex-workout-stage h4 {
+            color: var(--apex-text);
+            font-family: var(--apex-font-head);
+            font-size: 1.55rem;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .apex-workout-stage ol,
+        .apex-workout-stage ul {
+            display: grid;
+            gap: 8px;
+            padding-left: 20px;
+            color: var(--apex-muted);
+            line-height: 1.45;
+        }
+
+        .apex-workout-stage li strong {
+            color: var(--apex-text);
+        }
+
         .apex-empty {
             padding: 18px;
             border: 1px solid var(--apex-line);
@@ -685,6 +746,21 @@
         }
 
         @media (max-width: 720px) {
+            html,
+            body,
+            .apex-app,
+            .apex-main,
+            .apex-sidebar,
+            .apex-shell,
+            .apex-view,
+            .apex-grid,
+            .apex-panel {
+                width: 100%;
+                max-width: 100vw;
+                min-width: 0;
+                overflow-x: hidden;
+            }
+
             .apex-topbar {
                 align-items: stretch;
                 flex-direction: column;
@@ -726,6 +802,14 @@
 
             .apex-nav {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .apex-task {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .apex-task-check {
+                display: none;
             }
 
             .apex-stats,
@@ -834,20 +918,33 @@
 
                 <section class="apex-view" id="apex-view-mission">
                     <div class="apex-grid cols-2">
-                        <section class="apex-panel hot">
-                            <div class="apex-panel-title">
-                                <div>
-                                    <p class="apex-label" id="apex-mission-kicker">Day 1 / Foundation</p>
-                                    <h3 id="apex-mission-title">Daily Mission</h3>
+                        <div class="apex-grid">
+                            <section class="apex-panel hot">
+                                <div class="apex-panel-title">
+                                    <div>
+                                        <p class="apex-label" id="apex-mission-kicker">Day 1 / Foundation</p>
+                                        <h3 id="apex-mission-title">Daily Mission</h3>
+                                    </div>
+                                    <span class="apex-data" id="apex-mission-progress">0%</span>
                                 </div>
-                                <span class="apex-data" id="apex-mission-progress">0%</span>
-                            </div>
-                            <div class="apex-task-list" id="apex-mission-tasks"></div>
-                            <div class="apex-pill-row">
-                                <button class="apex-action primary" type="button" id="apex-complete-all-main">Complete Day</button>
-                                <button class="apex-action secondary" type="button" id="apex-reset-day">Reset Day</button>
-                            </div>
-                        </section>
+                                <div class="apex-task-list" id="apex-mission-tasks"></div>
+                                <div class="apex-pill-row">
+                                    <button class="apex-action primary" type="button" id="apex-complete-all-main">Complete Day</button>
+                                    <button class="apex-action secondary" type="button" id="apex-reset-day">Reset Day</button>
+                                </div>
+                            </section>
+
+                            <section class="apex-panel" id="apex-workout-panel">
+                                <div class="apex-panel-title">
+                                    <div>
+                                        <p class="apex-label" id="apex-workout-kicker">30-Minute Routine</p>
+                                        <h3 id="apex-workout-title">Workout A</h3>
+                                    </div>
+                                    <span class="apex-label" id="apex-workout-meta">5 days/week</span>
+                                </div>
+                                <div class="apex-workout-plan" id="apex-workout-plan"></div>
+                            </section>
+                        </div>
 
                         <div class="apex-grid">
                             <section class="apex-panel">
@@ -893,13 +990,25 @@
                         </div>
                         <p class="apex-muted">A single day-by-day course map. Open any day to view and complete its actual mission plan.</p>
                     </section>
-                    <section class="apex-panel">
-                        <div class="apex-panel-title">
-                            <h3>Course Days</h3>
-                            <span class="apex-label">Day 1-30</span>
-                        </div>
-                        <div class="apex-training-list" id="apex-training-days"></div>
-                    </section>
+                    <div class="apex-grid cols-2">
+                        <section class="apex-panel">
+                            <div class="apex-panel-title">
+                                <h3>Course Days</h3>
+                                <span class="apex-label">Day 1-30</span>
+                            </div>
+                            <div class="apex-training-list" id="apex-training-days"></div>
+                        </section>
+                        <section class="apex-panel" id="apex-training-workout-panel">
+                            <div class="apex-panel-title">
+                                <div>
+                                    <p class="apex-label" id="apex-training-workout-kicker">Selected Day</p>
+                                    <h3 id="apex-training-workout-title">Workout A</h3>
+                                </div>
+                                <span class="apex-label" id="apex-training-workout-meta">30 min</span>
+                            </div>
+                            <div class="apex-workout-plan" id="apex-training-workout-plan"></div>
+                        </section>
+                    </div>
                 </section>
 
                 <section class="apex-view" id="apex-view-logs">
@@ -932,10 +1041,190 @@
             ['speaking', '2 minutes speaking practice', 'Keep the voice active every day.']
         ];
         const APEX_PROTOCOL = [
-            ['breath', '10 deep belly breaths', 'Slow nasal breathing if possible.'],
-            ['kegel_hold', '5 Kegels with 10 second holds', 'Controlled tension and full release.'],
-            ['kegel_fast', '5 fast Kegel contractions', 'Quick contractions, clean release.'],
-            ['hip', '1 minute hip mobility', 'Open hips, stay relaxed.']
+            ['breath', '10 deep belly breaths', 'Downshift stress and keep the body relaxed.'],
+            ['kegel_cycles', '3 rounds of Kegel holds and full relax', 'Each round: 5 cycles of 10 sec hold, 10 sec relax.'],
+            ['hip', '1 minute hip mobility', 'Open hips and support better movement quality.']
+        ];
+        const APEX_WORKOUTS = {
+            'Workout A': {
+                title: 'Workout A',
+                subtitle: 'Chest, shoulders, legs',
+                meta: '30 min / 3 kg + 5 kg dumbbells',
+                stages: [
+                    {
+                        title: 'Warm-up',
+                        time: '3 min',
+                        items: [
+                            ['Jumping Jacks', '30 sec'],
+                            ['Arm Circles', '30 sec'],
+                            ['High Knees', '30 sec'],
+                            ['Bodyweight Squats', '20 reps']
+                        ]
+                    },
+                    {
+                        title: 'Circuit 1',
+                        time: '10 min / 3 rounds',
+                        items: [
+                            ['Dumbbell Goblet Squat', '5 kg / 15 reps'],
+                            ['Push-ups', '8-15 reps'],
+                            ['Dumbbell Shoulder Press', '12 reps'],
+                            ['Rest', '30 sec after each round']
+                        ]
+                    },
+                    {
+                        title: 'Circuit 2',
+                        time: '10 min / 3 rounds',
+                        items: [
+                            ['Walking Lunges', '12 each leg'],
+                            ['Dumbbell Floor Press', '15 reps'],
+                            ['Plank', '45 sec'],
+                            ['Rest', '30 sec after each round']
+                        ]
+                    },
+                    {
+                        title: 'Finisher',
+                        time: '5 min / continuous',
+                        items: [
+                            ['Mountain Climbers', '20 reps'],
+                            ['Squat Jumps', '10 reps'],
+                            ['Burpees', '5 reps']
+                        ]
+                    },
+                    {
+                        title: 'Cool Down',
+                        time: '2 min',
+                        items: [
+                            ['Hamstring Stretch', 'Slow hold'],
+                            ['Chest Stretch', 'Slow hold'],
+                            ['Deep Breathing', 'Relaxed nasal breathing']
+                        ]
+                    }
+                ]
+            },
+            'Workout B': {
+                title: 'Workout B',
+                subtitle: 'Back, arms, core',
+                meta: '30 min / 3 kg + 5 kg dumbbells',
+                stages: [
+                    {
+                        title: 'Warm-up',
+                        time: '3 min',
+                        items: [
+                            ['Jumping Jacks', '30 sec'],
+                            ['Arm Circles', '30 sec'],
+                            ['High Knees', '30 sec'],
+                            ['Bodyweight Squats', '20 reps']
+                        ]
+                    },
+                    {
+                        title: 'Circuit 1',
+                        time: '10 min / 3 rounds',
+                        items: [
+                            ['Dumbbell Bent-over Rows', '15 reps'],
+                            ['Bicep Curls', '15 reps'],
+                            ['Reverse Lunges', '12 each leg']
+                        ]
+                    },
+                    {
+                        title: 'Circuit 2',
+                        time: '10 min / 3 rounds',
+                        items: [
+                            ['Renegade Row', '10 each side'],
+                            ['Hammer Curl', '12 reps'],
+                            ['Russian Twists', '20 reps']
+                        ]
+                    },
+                    {
+                        title: 'Finisher',
+                        time: '5 min / 3 rounds',
+                        items: [
+                            ['High Knees', '30 sec'],
+                            ['Plank', '30 sec'],
+                            ['Leg Raises', '15 reps']
+                        ]
+                    },
+                    {
+                        title: 'Cool Down',
+                        time: '2 min',
+                        items: [
+                            ['Hamstring Stretch', 'Slow hold'],
+                            ['Chest Stretch', 'Slow hold'],
+                            ['Deep Breathing', 'Relaxed nasal breathing']
+                        ]
+                    }
+                ]
+            },
+            Walk: {
+                title: 'Walk',
+                subtitle: 'Recovery and cardiovascular base',
+                meta: '30 min / easy pace',
+                stages: [
+                    {
+                        title: 'Walk Protocol',
+                        time: '30 min',
+                        items: [
+                            ['Easy Walk', '30 minutes'],
+                            ['Phone Discipline', 'No phone if possible'],
+                            ['Posture', 'Tall spine, relaxed shoulders, steady breathing']
+                        ]
+                    }
+                ]
+            },
+            Rest: {
+                title: 'Rest',
+                subtitle: 'Recovery and review',
+                meta: 'No workout',
+                stages: [
+                    {
+                        title: 'Recovery Protocol',
+                        time: 'Today',
+                        items: [
+                            ['Sleep', '7.5-8.5 hours'],
+                            ['Walk', 'Light walk if energy is good'],
+                            ['Review', 'Use the mission checklist for reflection work']
+                        ]
+                    }
+                ]
+            },
+            Review: {
+                title: 'Review',
+                subtitle: 'Progress audit',
+                meta: 'No strength workout',
+                stages: [
+                    {
+                        title: 'Review Protocol',
+                        time: 'Today',
+                        items: [
+                            ['Watch / write', 'Complete the review task for this day'],
+                            ['Body evidence', 'Photos or notes if assigned'],
+                            ['Recovery', 'Keep sleep, water, steps, and reading intact']
+                        ]
+                    }
+                ]
+            }
+        };
+        const APEX_DAILY_HEALTH_STAGES = [
+            {
+                title: 'Daily Sexual Health Support',
+                time: '3 min',
+                items: [
+                    ['Kegel Hold', '10 sec'],
+                    ['Relax Fully', '10 sec'],
+                    ['Repeat', '5 cycles x 3 rounds'],
+                    ['Hip Mobility', '1 minute']
+                ]
+            },
+            {
+                title: 'Daily Baseline',
+                time: 'Every day',
+                items: [
+                    ['Sleep', '7.5-8.5 hours'],
+                    ['Water', '2-3 liters'],
+                    ['Walk', '8,000-10,000 steps'],
+                    ['Porn', 'Avoid excessive consumption'],
+                    ['Body Fat', 'Maintain a healthy range']
+                ]
+            }
         ];
         const APEX_WEEKS = [
             { week: 1, label: 'Build the Foundation', theme: 'Become someone who shows up.', range: [1, 7] },
@@ -1215,6 +1504,30 @@
             }).join('');
         }
 
+        function getWorkoutPlanForDay(day) {
+            const block = getPrimaryBlock(day);
+            return APEX_WORKOUTS[block] || APEX_WORKOUTS.Review;
+        }
+
+        function renderWorkoutPlan({ day, titleId, kickerId, metaId, holderId, includeDailyHealth = true }) {
+            const plan = getWorkoutPlanForDay(day);
+            document.getElementById(titleId).textContent = `Day ${day.day}: ${plan.title}`;
+            document.getElementById(kickerId).textContent = plan.subtitle;
+            document.getElementById(metaId).textContent = plan.meta;
+            const stages = includeDailyHealth ? [...plan.stages, ...APEX_DAILY_HEALTH_STAGES] : plan.stages;
+            document.getElementById(holderId).innerHTML = stages.map(stage => `
+                <article class="apex-workout-stage">
+                    <div class="apex-workout-stage-head">
+                        <h4>${escapeApex(stage.title)}</h4>
+                        <span class="apex-pill">${escapeApex(stage.time)}</span>
+                    </div>
+                    <ol>
+                        ${stage.items.map(item => `<li><strong>${escapeApex(item[0])}</strong> ${escapeApex(item[1])}</li>`).join('')}
+                    </ol>
+                </article>
+            `).join('');
+        }
+
         function renderDashboard() {
             const current = getDay();
             const week = getWeek();
@@ -1273,13 +1586,29 @@
             renderTaskList('apex-mission-tasks', current.tasks.map(task => ({ group: 'mission', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
             renderTaskList('apex-rule-tasks', APEX_RULES.map(task => ({ group: 'rule', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
             renderTaskList('apex-protocol-tasks', APEX_PROTOCOL.map(task => ({ group: 'protocol', id: task[0], title: task[1], detail: task[2] || '' })), current.day);
+            renderWorkoutPlan({
+                day: current,
+                titleId: 'apex-workout-title',
+                kickerId: 'apex-workout-kicker',
+                metaId: 'apex-workout-meta',
+                holderId: 'apex-workout-plan'
+            });
             document.getElementById('apex-note').value = apexState.notes[current.day] || '';
             document.getElementById('apex-week-label').textContent = `Week ${week.week} / ${week.label}`;
         }
 
         function renderTraining() {
+            const current = getDay();
             document.getElementById('apex-training-title').textContent = '30-Day Plan';
             document.getElementById('apex-training-count').textContent = '30';
+            renderWorkoutPlan({
+                day: current,
+                titleId: 'apex-training-workout-title',
+                kickerId: 'apex-training-workout-kicker',
+                metaId: 'apex-training-workout-meta',
+                holderId: 'apex-training-workout-plan',
+                includeDailyHealth: false
+            });
             renderTrainingList('apex-training-days', APEX_DAYS);
         }
 
@@ -1288,7 +1617,7 @@
                 <button class="apex-training-card ${day.day === apexState.currentDay ? 'active' : ''}" type="button" data-apex-day="${day.day}" data-apex-open-mission="1">
                     <span>
                         <strong>Day ${day.day}: ${escapeApex(getPrimaryBlock(day))}</strong>
-                        <span class="apex-muted">${escapeApex(day.focus)} / ${escapeApex(getWeek(day.day).label)}</span>
+                        <span class="apex-muted">${escapeApex(getWorkoutPlanForDay(day).subtitle)} / ${escapeApex(getWeek(day.day).label)}</span>
                     </span>
                     <span class="apex-pill">${getDayCompletion(day.day)}%</span>
                     <span class="apex-pill">Open</span>
