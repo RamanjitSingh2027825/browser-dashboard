@@ -4782,6 +4782,7 @@
         const CLIP_TOTAL_POINTER_LIMIT = 180;
         const CLIP_POINTERS_PER_VIDEO_LIMIT = 24;
         const CLIP_FEEDBACK_INTERVAL = 6;
+        const CLIP_CHANNEL_RUN_TARGET = 2;
         const CLIP_LEARNING_RATES = {
             stable: 0.03,
             balanced: 0.06,
@@ -5159,6 +5160,21 @@
             }));
         }
 
+        function normalizeClipChannelRun(run) {
+            if (!run || typeof run !== 'object' || Array.isArray(run)) return null;
+            const source = normalizeSourceLabel(run.source || '');
+            const key = normalizeSourceKey(run.key || source);
+            const count = Math.max(1, Math.min(CLIP_CHANNEL_RUN_TARGET, Number(run.count) || 1));
+            if (!source || !key) return null;
+            return {
+                source,
+                key,
+                tier: typeof run.tier === 'string' ? run.tier : '',
+                count,
+                updatedAt: run.updatedAt || new Date().toISOString()
+            };
+        }
+
         function normalizeClipState(rawState) {
             const state = rawState && typeof rawState === 'object' && !Array.isArray(rawState) ? rawState : {};
             const brain = state.brain && typeof state.brain === 'object' && !Array.isArray(state.brain)
@@ -5187,6 +5203,7 @@
             state.pointers = normalizeClipPointers(state.pointers);
             state.showSaved = Boolean(state.showSaved);
             state.menuView = ['mix', 'library', 'thoughts', 'channels'].includes(state.menuView) ? state.menuView : 'mix';
+            state.channelRun = normalizeClipChannelRun(state.channelRun);
             state.history = normalizeClipHistory([
                 ...(Array.isArray(state.history) ? state.history : []),
                 ...state.liked.map(clip => clip.videoId),
@@ -5418,6 +5435,9 @@
                 category: clip.category || 'Fresh pick',
                 description: clip.description || 'A fresh clip picked from your channel list.',
                 tags: Array.isArray(clip.tags) && clip.tags.length ? clip.tags.slice(0, 4) : ['Fresh', 'YouTube'],
+                query: normalizeSourceLabel(clip.query || ''),
+                tier: typeof clip.tier === 'string' ? clip.tier : '',
+                channelId: typeof clip.channelId === 'string' ? clip.channelId : '',
                 durationSeconds: Number.isFinite(Number(clip.durationSeconds))
                     ? Number(clip.durationSeconds)
                     : Number.isFinite(Number(clip.end)) && Number.isFinite(Number(clip.start))
@@ -5579,8 +5599,55 @@
             renderClipTastePanel();
         }
 
+        function getClipContinuitySource(clip = getCurrentClip()) {
+            return normalizeSourceLabel(clip?.query || clip?.source || '');
+        }
+
+        function updateClipChannelRun(clip) {
+            const source = getClipContinuitySource(clip);
+            const key = normalizeSourceKey(source);
+            if (!source || !key) {
+                clipState.channelRun = null;
+                return;
+            }
+            const previous = normalizeClipChannelRun(clipState.channelRun);
+            const count = previous?.key === key
+                ? Math.min(CLIP_CHANNEL_RUN_TARGET, previous.count + 1)
+                : 1;
+            clipState.channelRun = {
+                source,
+                key,
+                tier: clip?.tier || '',
+                count,
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function resetClipChannelRun() {
+            clipState.channelRun = null;
+        }
+
+        function getClipContinuationHint(options = {}) {
+            if (options.reason === 'not_for_me') return null;
+            const clip = getCurrentClip();
+            if (!clip?.videoId) return null;
+            const source = getClipContinuitySource(clip);
+            const key = normalizeSourceKey(source);
+            if (!source || !key) return null;
+            const run = normalizeClipChannelRun(clipState.channelRun);
+            const count = run?.key === key ? run.count : 1;
+            if (count >= CLIP_CHANNEL_RUN_TARGET) return null;
+            return {
+                source,
+                tier: clip.tier || run?.tier || '',
+                previousVideoId: clip.videoId,
+                remaining: CLIP_CHANNEL_RUN_TARGET - count
+            };
+        }
+
         function setCurrentClip(clip) {
             clipState.clip = normalizeClip(clip);
+            updateClipChannelRun(clipState.clip);
             rememberClip(clipState.clip.videoId);
             saveClipState();
             return clipState.clip;
@@ -5650,6 +5717,7 @@
             if (!clip?.videoId) return;
             if (clipPlaybackSession) clipPlaybackSession.explicitNegative = true;
             recordClipSignal('not_for_me', clip, { reason: 'Skip' });
+            resetClipChannelRun();
             document.getElementById('clip-load-status').textContent = 'Skipped.';
             pickNewClipOfHour({ skipFinalize: true, reason: 'not_for_me' });
         }
@@ -6520,14 +6588,28 @@
             if (payload?.sourceTiers) {
                 url.searchParams.set('sourceTiers', JSON.stringify(payload.sourceTiers));
             }
+            if (payload?.continuitySource) {
+                url.searchParams.set('continuitySource', payload.continuitySource);
+            }
+            if (payload?.continuityTier) {
+                url.searchParams.set('continuityTier', payload.continuityTier);
+            }
             return url;
         }
 
-        function getClipApiPayload() {
-            return {
+        function getClipApiPayload(options = {}) {
+            const continuity = getClipContinuationHint(options);
+            const payload = {
                 avoid: getClipHistory(),
                 sourceTiers: getClipSourceTiers()
             };
+            if (continuity) {
+                payload.continuitySource = continuity.source;
+                payload.continuityTier = continuity.tier;
+                payload.continuityPreviousVideoId = continuity.previousVideoId;
+                payload.continuityRemaining = continuity.remaining;
+            }
+            return payload;
         }
 
         function getClipPrefetchUrl() {
@@ -6566,8 +6648,8 @@
             if (!opened) window.location.href = clipUrl;
         }
 
-        async function fetchDynamicClip() {
-            const payload = getClipApiPayload();
+        async function fetchDynamicClip(options = {}) {
+            const payload = getClipApiPayload(options);
             const url = getClipApiUrl(payload);
             if (!url) throw new Error('Clip search needs the local dashboard server.');
             let response = await fetch(url.toString(), {
@@ -6682,7 +6764,7 @@
                 renderClipLoading();
             }
             try {
-                const result = await fetchDynamicClip();
+                const result = await fetchDynamicClip(options);
                 if (requestId !== clipRequestId || !document.getElementById('clip-overlay').classList.contains('active')) return;
                 const tierLabel = result.meta?.tier ? result.meta.tier.replace('_', ' ') : 'channel';
                 const detail = `${result.meta?.cached ? 'Ready' : 'Fresh'} ${tierLabel} pick`;

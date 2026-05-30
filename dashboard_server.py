@@ -880,10 +880,40 @@ def matched_source_tier(channel: str, source_tiers: dict[str, list[str]]) -> tup
     return None
 
 
-def choose_channel_sources(source_tiers: dict[str, list[str]], count: int) -> list[tuple[str, str]]:
+def find_configured_source(
+    source_tiers: dict[str, list[str]],
+    source_name: str,
+    tier_hint: str = "",
+) -> tuple[str, str] | None:
+    source = normalize_source_name(source_name)
+    if not source:
+        return None
+    tiers = [tier_hint] if tier_hint in SOURCE_TIER_ORDER else []
+    tiers.extend(tier for tier in SOURCE_TIER_ORDER if tier not in tiers)
+    for tier in tiers:
+        for configured_source in source_tiers.get(tier, []):
+            if source_match(configured_source, source):
+                return tier, configured_source
+    return None
+
+
+def choose_channel_sources(
+    source_tiers: dict[str, list[str]],
+    count: int,
+    preferred_source: str = "",
+    preferred_tier: str = "",
+) -> list[tuple[str, str]]:
     pool = flatten_source_tiers(source_tiers)
     random.shuffle(pool)
     selected: list[tuple[str, str]] = []
+    preferred = find_configured_source(source_tiers, preferred_source, preferred_tier)
+    if preferred:
+        selected.append(preferred)
+        preferred_key = (preferred[0], source_match_key(preferred[1]))
+        pool = [
+            item for item in pool
+            if (item[0], source_match_key(item[1])) != preferred_key
+        ]
     while pool and len(selected) < count:
         weights = [SOURCE_TIER_WEIGHTS.get(tier, 1) for tier, _source in pool]
         item = random.choices(pool, weights=weights, k=1)[0]
@@ -908,6 +938,12 @@ def parse_clip_taste_hints(query: dict[str, list[str]]) -> dict:
     focus = parse_focus_term(query.get("focus", [""])[0])
     focus_mode = (query.get("focusMode", ["include"])[0] or "include").strip().lower()
     source_tiers = parse_source_tiers(query.get("sourceTiers", []))
+    continuity_source = normalize_source_name(query.get("continuitySource", [""])[0])
+    continuity_tier = SOURCE_TIER_ALIASES.get(
+        (query.get("continuityTier", [""])[0] or "").strip().lower(),
+        "",
+    )
+    continuity_match = find_configured_source(source_tiers, continuity_source, continuity_tier)
     if duration not in DURATION_CHOICES:
         duration = ""
     if explore not in EXPLORE_CHOICES:
@@ -922,6 +958,8 @@ def parse_clip_taste_hints(query: dict[str, list[str]]) -> dict:
         "focus": focus,
         "focusMode": focus_mode,
         "sourceTiers": source_tiers,
+        "continuitySource": continuity_match[1] if continuity_match else "",
+        "continuityTier": continuity_match[0] if continuity_match else "",
         "sourceBonusTerms": build_source_bonus_terms(source_tiers),
         "hasHints": bool(topics or avoid_topics or duration or focus or explore != "explore"),
     }
@@ -1087,17 +1125,33 @@ def get_cached_video_ids() -> set[str]:
         }
 
 
+def clip_matches_source(clip: dict, source: str) -> bool:
+    if not source:
+        return True
+    return (
+        source_match(clip.get("query", ""), source)
+        or source_match(clip.get("source", ""), source)
+    )
+
+
 def clip_matches_taste_hints(clip: dict, taste_hints: dict | None = None) -> bool:
     source_tiers = (taste_hints or {}).get("sourceTiers") or normalize_source_tiers()
+    continuity_source = (taste_hints or {}).get("continuitySource") or ""
+    if continuity_source and not clip_matches_source(clip, continuity_source):
+        return False
     return bool(matched_source_tier(clip.get("source", ""), source_tiers))
 
 
 def pop_cached_clip(avoid_ids: set[str], taste_hints: dict | None = None) -> tuple[dict, dict] | None:
+    continuity_source = (taste_hints or {}).get("continuitySource") or ""
     with CLIP_CACHE_LOCK:
         items = load_clip_cache_unlocked()
         for index, item in enumerate(items):
             clip = item.get("clip", {})
+            item_meta = item.get("meta", {})
             video_id = clip.get("videoId")
+            if not continuity_source and item_meta.get("continuitySource"):
+                continue
             if video_id and video_id not in avoid_ids and clip_matches_taste_hints(clip, taste_hints):
                 selected = items.pop(index)
                 save_clip_cache_unlocked(items)
@@ -1823,6 +1877,7 @@ def score_video(item: dict, topic: dict | None, query: str, taste_hints: dict | 
         "durationSeconds": seconds,
         "query": query,
         "tier": tier,
+        "channelId": item.get("channelId", ""),
         "searchedAt": int(time.time()),
     }
     return score, clip
@@ -1899,8 +1954,15 @@ def search_fresh_clip(
     history = load_history()
     avoid = set(history) | avoid_ids
     source_tiers = (taste_hints or {}).get("sourceTiers") or normalize_source_tiers()
+    continuity_source = (taste_hints or {}).get("continuitySource") or ""
+    continuity_tier = (taste_hints or {}).get("continuityTier") or ""
     attempts = get_clip_search_attempt_count()
-    channel_sources = choose_channel_sources(source_tiers, attempts)
+    channel_sources = choose_channel_sources(
+        source_tiers,
+        attempts,
+        preferred_source=continuity_source,
+        preferred_tier=continuity_tier,
+    )
     if not channel_sources:
         raise ClipError("No channel tiers configured for Clip Mix.")
 
@@ -1988,6 +2050,16 @@ def search_fresh_clip(
     if not scored:
         raise ClipError("No search results passed the Clip Mix filters.")
 
+    continuity_matched = []
+    if continuity_source:
+        continuity_matched = [
+            (score + 80, clip_item)
+            for score, clip_item in scored
+            if clip_matches_source(clip_item, continuity_source)
+        ]
+        if continuity_matched:
+            scored = continuity_matched
+
     clip = pick_weighted(scored)
     if remember:
         history.append(clip["videoId"])
@@ -2000,6 +2072,8 @@ def search_fresh_clip(
         "mode": "channel-youtube",
         "candidateCount": len(scored),
         "sourceCount": sum(len(sources) for sources in source_tiers.values()),
+        "continuitySource": continuity_source,
+        "continuityMatched": bool(continuity_matched),
     }
     store_discovered_extras(scored, clip["videoId"], meta, avoid)
     return clip, meta
