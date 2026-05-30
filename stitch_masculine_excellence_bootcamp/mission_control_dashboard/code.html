@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - Mission Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#ab8980",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "surface": "#131313",
+                    "primary-container": "#cc3300",
+                    "secondary-container": "#474746",
+                    "on-primary": "#611300",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-tertiary": "#2f3131",
+                    "inverse-on-surface": "#313030",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#3a3939",
+                    "primary": "#ffb5a1",
+                    "on-background": "#e5e2e1",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#6b6d6d",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#ffb5a1",
+                    "inverse-surface": "#e5e2e1",
+                    "on-secondary": "#313030",
+                    "secondary": "#c8c6c5",
+                    "surface-variant": "#353534",
+                    "on-tertiary-container": "#efeff0",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-tint": "#ffb5a1",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#ffdbd1",
+                    "surface-dim": "#131313",
+                    "tertiary": "#c6c6c7",
+                    "on-primary-container": "#ffece7",
+                    "background": "#131313",
+                    "outline-variant": "#5b4039",
+                    "on-secondary-container": "#b7b5b4",
+                    "on-primary-fixed": "#3c0800",
+                    "secondary-fixed": "#e5e2e1",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-surface": "#e5e2e1",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#e4beb4",
+                    "inverse-primary": "#b22b00",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-primary-fixed-variant": "#881f00",
+                    "surface-container-low": "#1c1b1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "margin": "32px",
+                    "base": "8px",
+                    "lg": "48px",
+                    "md": "24px",
+                    "sm": "12px",
+                    "gutter": "24px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Archivo Narrow"
+                    ],
+                    "display-lg-mobile": [
+                            "Archivo Narrow"
+                    ],
+                    "headline-lg": [
+                            "Archivo Narrow"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "data-point": [
+                            "JetBrains Mono"
+                    ],
+                    "label-caps": [
+                            "JetBrains Mono"
+                    ],
+                    "headline-xl": [
+                            "Archivo Narrow"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "72px",
+                            {
+                                    "lineHeight": "80px",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "48px",
+                            {
+                                    "lineHeight": "52px",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "data-point": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-xl": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        /* Grain overlay for Level 1 surfaces */
+        .surface-grain {
+            position: relative;
+        }
+        .surface-grain::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.02"/%3E%3C/svg%3E');
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar (Web) -->
+<nav class="hidden lg:flex flex-col h-full p-md bg-surface-container dark:bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-40 surface-grain">
+<div class="mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary uppercase leading-tight tracking-tighter">APEX<br/>DISCIPLINE</h1>
+</div>
+<div class="mb-md border-b border-outline-variant pb-md">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-xs">Spartan 001</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">Day 12 of 30</p>
+</div>
+<ul class="flex flex-col gap-base flex-grow mt-md">
+<li>
+<a class="flex items-center gap-sm p-sm text-on-primary bg-primary font-bold border-l-4 border-on-primary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent group" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-caps text-label-caps uppercase">Training</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent group" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-caps text-label-caps uppercase">Mindset</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent group" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-caps text-label-caps uppercase">Performance</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent group" href="#">
+<span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+<span class="font-label-caps text-label-caps uppercase">Mission Logs</span>
+</a>
+</li>
+</ul>
+<button class="w-full bg-[#cc3300] text-white font-display-lg text-headline-lg uppercase py-sm mt-auto hover:bg-white hover:text-black transition-colors duration-150 border border-transparent hover:border-white active:brightness-125">
+            DEPLOY MISSION
+        </button>
+<ul class="flex flex-col gap-base mt-md border-t border-outline-variant pt-md">
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-caps text-label-caps uppercase">Support</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-sm p-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-caps text-label-caps uppercase">Logout</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- TopAppBar (Mobile & Web Context) -->
+<div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
+<header class="bg-surface dark:bg-surface w-full top-0 sticky border-b border-outline-variant dark:border-outline-variant z-30">
+<div class="flex justify-between items-center px-margin py-base w-full max-w-[1200px] mx-auto">
+<div class="lg:hidden">
+<h1 class="font-display-lg-mobile text-display-lg-mobile uppercase tracking-tighter text-primary dark:text-primary leading-none">MISSION CONTROL</h1>
+</div>
+<div class="hidden lg:block">
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">Mission Control</h2>
+</div>
+<div class="flex gap-sm items-center">
+<button class="p-xs text-on-surface-variant hover:bg-surface-bright transition-colors active:scale-95 duration-75 text-primary dark:text-primary">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:bg-surface-bright transition-colors active:scale-95 duration-75 text-primary dark:text-primary">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-margin lg:p-xl max-w-[1200px] mx-auto w-full pb-32 lg:pb-xl flex flex-col gap-xl">
+<!-- Hero / Context -->
+<section class="flex flex-col md:flex-row gap-lg justify-between items-start md:items-end border-b border-surface-container-high pb-md">
+<div>
+<p class="font-label-caps text-label-caps text-primary uppercase tracking-widest mb-xs">Week 2 Focus</p>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg uppercase leading-none tracking-tighter text-on-surface">BUILD PRESENCE</h2>
+</div>
+<div class="text-left md:text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-xs">Current Phase</p>
+<p class="font-data-point text-data-point text-on-surface">DAY 12 / 30</p>
+</div>
+</section>
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-gutter">
+<!-- Daily Rules (Bento Grid) -->
+<section class="lg:col-span-8 flex flex-col gap-md">
+<h3 class="font-headline-lg text-headline-lg uppercase border-b border-surface-container-high pb-xs">Daily Rules</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-xs">
+<!-- Rule 1 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md flex flex-col items-center justify-center gap-sm surface-grain cursor-pointer hover:border-[#cc3300] transition-colors group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-headline-xl" data-icon="bed">bed</span>
+<div class="text-center">
+<p class="font-data-point text-data-point leading-none">8h</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-xs">SLEEP</p>
+</div>
+</div>
+<!-- Rule 2 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md flex flex-col items-center justify-center gap-sm surface-grain cursor-pointer hover:border-[#cc3300] transition-colors group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-headline-xl" data-icon="water_drop">water_drop</span>
+<div class="text-center">
+<p class="font-data-point text-data-point leading-none">2L</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-xs">WATER</p>
+</div>
+</div>
+<!-- Rule 3 -->
+<div class="bg-[#1A1A1A] border border-[#cc3300] p-md flex flex-col items-center justify-center gap-sm surface-grain cursor-pointer transition-colors group relative overflow-hidden">
+<!-- Completed state example -->
+<div class="absolute inset-0 bg-[#cc3300]/10 border-b-2 border-[#cc3300] bottom-0 h-full w-full pointer-events-none"></div>
+<span class="material-symbols-outlined text-primary text-headline-xl relative z-10" data-icon="directions_walk">directions_walk</span>
+<div class="text-center relative z-10">
+<p class="font-data-point text-data-point leading-none text-primary">8.2k</p>
+<p class="font-label-caps text-label-caps text-primary mt-xs">STEPS / 8k</p>
+</div>
+</div>
+<!-- Rule 4 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md flex flex-col items-center justify-center gap-sm surface-grain cursor-pointer hover:border-[#cc3300] transition-colors group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-headline-xl" data-icon="restaurant">restaurant</span>
+<div class="text-center">
+<p class="font-data-point text-data-point leading-none">--</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-xs">PROTEIN</p>
+</div>
+</div>
+</div>
+<!-- No Skipping Banner -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md surface-grain flex justify-between items-center mt-sm border-l-4 border-l-error">
+<div>
+<p class="font-headline-lg text-headline-lg uppercase text-on-surface leading-tight">NO SKIPPING</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Uncompromising commitment to the protocol.</p>
+</div>
+<span class="material-symbols-outlined text-error text-headline-xl" data-icon="gpp_bad">gpp_bad</span>
+</div>
+</section>
+<!-- Daily Tasks -->
+<section class="lg:col-span-4 flex flex-col gap-md">
+<h3 class="font-headline-lg text-headline-lg uppercase border-b border-surface-container-high pb-xs">Daily Tasks</h3>
+<div class="flex flex-col gap-xs">
+<!-- Task 1 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md surface-grain flex items-start gap-md hover:border-outline-variant transition-colors cursor-pointer">
+<div class="w-6 h-6 border-2 border-outline-variant shrink-0 mt-1 flex items-center justify-center"></div>
+<div>
+<p class="font-label-caps text-label-caps text-primary uppercase mb-1">TRAINING</p>
+<p class="font-headline-lg text-headline-lg uppercase leading-tight">Workout B</p>
+</div>
+</div>
+<!-- Task 2 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md surface-grain flex items-start gap-md hover:border-outline-variant transition-colors cursor-pointer">
+<div class="w-6 h-6 border-2 border-outline-variant shrink-0 mt-1 flex items-center justify-center"></div>
+<div>
+<p class="font-label-caps text-label-caps text-primary uppercase mb-1">MINDSET</p>
+<p class="font-headline-lg text-headline-lg uppercase leading-tight">Voice / Reading</p>
+</div>
+</div>
+<!-- Task 3 -->
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md surface-grain flex items-start gap-md hover:border-outline-variant transition-colors cursor-pointer">
+<div class="w-6 h-6 border-2 border-outline-variant shrink-0 mt-1 flex items-center justify-center"></div>
+<div>
+<p class="font-label-caps text-label-caps text-primary uppercase mb-1">MISSION LOG</p>
+<p class="font-headline-lg text-headline-lg uppercase leading-tight">Video Check-in</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Progress Overview (Minimalist Graph Area) -->
+<section class="flex flex-col gap-md mt-lg">
+<div class="flex justify-between items-end border-b border-surface-container-high pb-xs">
+<h3 class="font-headline-lg text-headline-lg uppercase">Progress Overview</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">Last 11 Days</p>
+</div>
+<div class="bg-[#1A1A1A] border border-[#2A2A2A] p-md md:p-lg surface-grain h-[200px] flex items-end justify-between gap-1 md:gap-xs">
+<!-- Segmented blocks for progress instead of smooth chart per design rules -->
+<!-- Day 1-11 -->
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-full border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[90%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[80%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-outline-variant w-full h-[40%] border-t border-white"></div></div> <!-- Dip -->
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[90%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+<div class="w-full bg-[#2A2A2A] flex flex-col justify-end h-[100%]"><div class="bg-[#cc3300] w-full h-[100%] border-t border-white"></div></div>
+</div>
+</section>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="lg:hidden flex justify-around items-center w-full pb-safe h-16 bg-surface-container-low dark:bg-surface-container-low fixed bottom-0 w-full z-50">
+<a class="flex flex-col items-center justify-center text-primary border-t-2 border-primary pt-1 w-full h-full" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full border-t-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="exercise">exercise</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Workouts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full border-t-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full border-t-2 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

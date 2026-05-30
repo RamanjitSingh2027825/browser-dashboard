@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Speaking &amp; Video Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#ab8980",
+                      "on-error": "#690005",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "surface": "#131313",
+                      "primary-container": "#cc3300",
+                      "secondary-container": "#474746",
+                      "on-primary": "#611300",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "on-tertiary": "#2f3131",
+                      "inverse-on-surface": "#313030",
+                      "on-error-container": "#ffdad6",
+                      "surface-bright": "#3a3939",
+                      "primary": "#ffb5a1",
+                      "on-background": "#e5e2e1",
+                      "error": "#ffb4ab",
+                      "tertiary-container": "#6b6d6d",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "primary-fixed-dim": "#ffb5a1",
+                      "inverse-surface": "#e5e2e1",
+                      "on-secondary": "#313030",
+                      "secondary": "#c8c6c5",
+                      "surface-variant": "#353534",
+                      "on-tertiary-container": "#efeff0",
+                      "tertiary-fixed-dim": "#c6c6c7",
+                      "surface-tint": "#ffb5a1",
+                      "error-container": "#93000a",
+                      "primary-fixed": "#ffdbd1",
+                      "surface-dim": "#131313",
+                      "tertiary": "#c6c6c7",
+                      "on-primary-container": "#ffece7",
+                      "background": "#131313",
+                      "outline-variant": "#5b4039",
+                      "on-secondary-container": "#b7b5b4",
+                      "on-primary-fixed": "#3c0800",
+                      "secondary-fixed": "#e5e2e1",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-surface": "#e5e2e1",
+                      "tertiary-fixed": "#e2e2e2",
+                      "surface-container-highest": "#353534",
+                      "on-surface-variant": "#e4beb4",
+                      "inverse-primary": "#b22b00",
+                      "surface-container-high": "#2a2a2a",
+                      "surface-container": "#201f1f",
+                      "on-secondary-fixed-variant": "#474746",
+                      "on-primary-fixed-variant": "#881f00",
+                      "surface-container-low": "#1c1b1b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "80px",
+                      "margin": "32px",
+                      "base": "8px",
+                      "lg": "48px",
+                      "md": "24px",
+                      "sm": "12px",
+                      "gutter": "24px",
+                      "xs": "4px"
+              },
+              "fontFamily": {
+                      "display-lg": [
+                              "Archivo Narrow"
+                      ],
+                      "display-lg-mobile": [
+                              "Archivo Narrow"
+                      ],
+                      "headline-lg": [
+                              "Archivo Narrow"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "data-point": [
+                              "JetBrains Mono"
+                      ],
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-xl": [
+                              "Archivo Narrow"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg": [
+                              "72px",
+                              {
+                                      "lineHeight": "80px",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "48px",
+                              {
+                                      "lineHeight": "52px",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "data-point": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-xl": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Grain overlay */
+        .surface-grain::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        
+        .material-symbols-outlined.fill {
+          font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col md:flex-row antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Desktop) -->
+<nav class="bg-surface-container dark:bg-surface-container text-primary dark:text-primary h-screen w-64 fixed left-0 top-0 border-r border-outline-variant hidden lg:flex flex-col h-full p-md z-40">
+<div class="mb-lg">
+<h1 class="font-display-lg text-display-lg text-primary uppercase leading-none tracking-tighter">MISSION CONTROL</h1>
+</div>
+<div class="flex items-center gap-sm mb-lg border-b border-surface-variant pb-md">
+<div class="w-12 h-12 bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden shrink-0">
+<img alt="User Profile" class="w-full h-full object-cover opacity-80 mix-blend-luminosity grayscale" data-alt="A high-contrast, black and white close-up portrait of a determined individual looking straight ahead. The lighting is harsh and dramatic, emphasizing facial contours and a stoic expression. The background is pure dark, focusing entirely on the subject. The style reflects an industrial, gritty, modern spartan aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn9i2pDEU_4drOT13t-dHML20TDr0LgIngAFxi57yMcUvHrN_8X8IrvEs2JZr4yDKJALRQ3YEksqWRudSYan-Q55oXhs8WB70qWQk9HkE9eXFeT6WmNvk6no9xeDfE1boq0Oa0RvhmUU0oNARP2HDlT7zdInJ4XAxvB6lc4eUIIHCgXvRhuc-TOkHFEuDPpS1O08pA_5K4X74wC_2QjjZl6rKQ5ILx6Ctqov4vOfsSigxYWLvbxfj5N12HNilGuBxMA60EbvNYPek"/>
+</div>
+<div>
+<div class="font-headline-lg text-[20px] leading-tight text-on-surface">Spartan 001</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant">Day 12 of 30</div>
+</div>
+</div>
+<ul class="flex flex-col gap-base flex-grow">
+<li>
+<a class="flex items-center gap-sm px-sm py-sm font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 active:brightness-125" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="grid_view">grid_view</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 active:brightness-125" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="fitness_center">fitness_center</span>
+                    Training
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 active:brightness-125" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="psychology">psychology</span>
+                    Mindset
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150 active:brightness-125" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="monitoring">monitoring</span>
+                    Performance
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm font-label-caps text-label-caps text-on-primary bg-primary font-bold border-l-4 border-on-primary-fixed-variant hover:bg-surface-container-highest transition-all duration-150 active:brightness-125" href="#">
+<span class="material-symbols-outlined text-[20px] fill" data-icon="videocam" data-weight="fill">videocam</span>
+                    Mission Logs
+                </a>
+</li>
+</ul>
+<div class="mt-auto pt-lg">
+<button class="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps py-sm px-md uppercase hover:bg-on-surface hover:text-surface transition-colors duration-150 mb-md border border-primary-container hover:border-on-surface">
+                DEPLOY MISSION
+            </button>
+<ul class="flex flex-col gap-xs border-t border-surface-variant pt-sm">
+<li>
+<a class="flex items-center gap-sm px-sm py-xs font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="help_outline">help_outline</span>
+                        Support
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-xs font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-[16px]" data-icon="logout">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopAppBar (Mobile) -->
+<header class="bg-surface dark:bg-surface w-full top-0 sticky border-b border-outline-variant dark:border-outline-variant lg:hidden z-40">
+<div class="flex justify-between items-center px-margin py-base w-full max-w-[1200px] mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile uppercase tracking-tighter text-primary dark:text-primary leading-none">MISSION CONTROL</div>
+<div class="flex gap-sm">
+<button class="text-primary dark:text-primary hover:bg-surface-bright transition-colors p-xs active:scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="text-primary dark:text-primary hover:bg-surface-bright transition-colors p-xs active:scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow lg:ml-64 w-full flex flex-col pb-24 lg:pb-0">
+<div class="w-full max-w-[1200px] mx-auto p-margin md:p-lg flex flex-col gap-xl">
+<!-- Page Header -->
+<div class="border-b border-surface-variant pb-md">
+<h2 class="font-headline-xl text-headline-xl uppercase text-on-surface mb-xs">Speaking &amp; Video Lab</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Record, review, and refine your communication protocols.</p>
+</div>
+<!-- Video Recording Interface -->
+<section class="bg-surface-container-high border border-surface-variant surface-grain relative">
+<div class="p-md flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] relative overflow-hidden bg-black group">
+<!-- Placeholder for Camera View -->
+<div class="absolute inset-0 z-0">
+<img alt="Camera Feed Placeholder" class="w-full h-full object-cover opacity-40 grayscale" data-alt="A dark, cinematic recording studio setup viewed from the perspective of a camera lens. The environment is heavily shadowed with only a single, dramatic spotlight illuminating a central chair. The walls are soundproofed with industrial acoustic panels. The overall aesthetic is highly technical, serious, and focused, utilizing a stark black and white palette with sharp contrasts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0MGJsqSF3hGWvrdrpCIVBz7KQ-MLdX94F-2Xet8MZExNTnFZ4Pmx-ylvXHlAlm1jazlQgoX9CvHUYmLprHFMGzzqmHpy9K6dqim6YMjBLSw9EeGR4qHpCowrztOKgrKSpRonsnpAmaHhJSKBXblXeoYq0cMqJiVyc0xHUohzIzjoFu9qTd-R-ldRWscNholRFG84sZzmhEDd4LhyucqNwTVzZudbkHWr37iSNF-s7EaM_oSCztzEc63tCTolFCzraLrYsQu485rA"/>
+</div>
+<!-- Recording Overlay -->
+<div class="absolute top-sm left-sm z-10 flex items-center gap-xs bg-surface/80 border border-surface-variant px-sm py-xs">
+<div class="w-3 h-3 rounded-full bg-error animate-pulse"></div>
+<span class="font-data-point text-data-point text-[14px] text-error">00:04:23</span>
+</div>
+<!-- Prompt Display -->
+<div class="relative z-10 text-center mb-lg px-md w-full max-w-2xl">
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-sm tracking-widest border-b border-surface-variant pb-xs inline-block">Current Prompt</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface drop-shadow-md">"What I learned this week"</h3>
+</div>
+<!-- Controls -->
+<div class="relative z-10 flex gap-md items-center mt-auto pb-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-12 h-12 bg-surface border border-outline-variant flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface" data-icon="mic">mic</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-primary-container border-2 border-primary-container flex items-center justify-center hover:bg-on-surface hover:border-on-surface group/record transition-all duration-200 shadow-[0_0_15px_rgba(204,51,0,0.5)]">
+<div class="w-6 h-6 bg-on-primary-container group-hover/record:bg-surface rounded-sm transition-colors duration-200"></div>
+</button>
+<button class="w-12 h-12 bg-surface border border-outline-variant flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface" data-icon="cameraswitch">cameraswitch</span>
+</button>
+</div>
+</div>
+<!-- Post-Recording Action Strip -->
+<div class="border-t border-surface-variant bg-surface p-sm flex justify-between items-center">
+<div class="font-label-caps text-label-caps text-on-surface-variant">Log #042 - Active Session</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border-2 border-outline-variant text-on-surface font-label-caps text-label-caps uppercase hover:bg-surface-container-highest transition-colors">Discard</button>
+<button class="px-md py-sm bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase hover:bg-on-surface hover:text-surface transition-colors border border-primary-container hover:border-on-surface">Save &amp; Log</button>
+</div>
+</div>
+</section>
+<!-- History/Log Grid -->
+<section class="flex flex-col gap-md">
+<div class="flex justify-between items-end border-b border-surface-variant pb-xs">
+<h3 class="font-headline-lg text-headline-lg uppercase text-on-surface">Mission Archives</h3>
+<div class="font-label-caps text-label-caps text-on-surface-variant border border-surface-variant px-sm py-xs bg-surface-container-low flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_list">filter_list</span>
+                        Sort: Newest
+                    </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Log Item 1 -->
+<div class="bg-surface-container-high border border-surface-variant flex flex-col group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-video relative overflow-hidden bg-black border-b border-surface-variant">
+<img alt="Video Thumbnail" class="w-full h-full object-cover opacity-60 grayscale group-hover:scale-105 transition-transform duration-500" data-alt="A stark black and white image of a person sitting in front of a microphone in a dark, soundproofed room. The focus is tight on the microphone and the lower half of the speaker's face. Lighting is minimal, creating deep shadows and emphasizing the texture of the equipment. The aesthetic is raw, industrial, and intensely focused on the act of recording." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-yOtLNGHxPHDk0KN7T9MW2uIgon6_R213r1YWy39BI1h1GRPNli7OMXgqRqhJvnugI0e4WS8ne2bFVAvPiiMGrQiK0e1G1YFD6-KVSBUrcIbBXkIRqCYpkEdSuvxCX4pckqOg-DmD5EOxNLAbnvdqDBzKoBq1jVjbd0ssoDtbTEXJbrcA5rOQBzhr8r4lM_LbE6cjXwsFQk6tHGO5oMF4shfmleprD4y0bqZ5kG4R_TEhd4Fc2Feit1dFEYAkDc3Hj2StDVtY8Hw"/>
+<div class="absolute bottom-sm right-sm bg-surface/90 border border-surface-variant px-xs py-px font-data-point text-data-point text-[12px] text-on-surface">03:12</div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+<span class="material-symbols-outlined text-[48px] text-primary" data-icon="play_circle">play_circle</span>
+</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-lg text-[20px] leading-tight text-on-surface truncate pr-sm">Strategic Review Q3</h4>
+<span class="font-data-point text-data-point text-[14px] text-primary whitespace-nowrap">2023.10.24</span>
+</div>
+<!-- Confidence Tracker -->
+<div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/50">
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Confidence Level</span>
+<div class="flex gap-px">
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="bg-surface-container-high border border-surface-variant flex flex-col group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-video relative overflow-hidden bg-black border-b border-surface-variant">
+<img alt="Video Thumbnail" class="w-full h-full object-cover opacity-60 grayscale group-hover:scale-105 transition-transform duration-500" data-alt="A monochromatic, high-contrast shot of a professional studio setup. A heavy-duty boom arm holds a studio microphone over a dark desk. The background is a solid, impenetrable black. The only light catches the metallic edges of the equipment, giving it a machined, industrial look. The mood is solitary and disciplined, fitting a modern spartan theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKpNkU7vicF-niHb84PNxr28sw8tId3gzLynmAoMXXO9pUWEv--vAp3i9Y5DGl_AjlmnxV8yyHe8rr3LRGMXkwXcADtlkoClOFkzVrouq2VSRVzlKj0kSWBz-zzHysgE6TdMnua9p87bWEpINAzK6gS0fOtRJQMYXmZdyq7t9ttbiBR45HdaI2qSYjp0Ao_lsq_hIZ-emJi50A7wlLvde9Ts2hTl4nA7I-8NdHzNo4tiA7ydxduL_4QjfCzovKEVnq2YR51gN4y0Q"/>
+<div class="absolute bottom-sm right-sm bg-surface/90 border border-surface-variant px-xs py-px font-data-point text-data-point text-[12px] text-on-surface">05:45</div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+<span class="material-symbols-outlined text-[48px] text-primary" data-icon="play_circle">play_circle</span>
+</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-lg text-[20px] leading-tight text-on-surface truncate pr-sm">Morning Briefing</h4>
+<span class="font-data-point text-data-point text-[14px] text-primary whitespace-nowrap">2023.10.22</span>
+</div>
+<div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/50">
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Confidence Level</span>
+<div class="flex gap-px">
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Log Item 3 -->
+<div class="bg-surface-container-high border border-surface-variant flex flex-col group cursor-pointer hover:border-primary transition-colors">
+<div class="aspect-video relative overflow-hidden bg-black border-b border-surface-variant">
+<div class="w-full h-full bg-surface-container flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-outline-variant text-[48px]" data-icon="broken_image">broken_image</span>
+</div>
+<div class="absolute bottom-sm right-sm bg-surface/90 border border-surface-variant px-xs py-px font-data-point text-data-point text-[12px] text-on-surface">02:10</div>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+<span class="material-symbols-outlined text-[48px] text-primary" data-icon="play_circle">play_circle</span>
+</div>
+</div>
+<div class="p-sm flex flex-col gap-xs flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-headline-lg text-[20px] leading-tight text-on-surface truncate pr-sm">Failure Analysis</h4>
+<span class="font-data-point text-data-point text-[14px] text-primary whitespace-nowrap">2023.10.18</span>
+</div>
+<div class="mt-auto pt-sm flex items-center justify-between border-t border-surface-variant/50">
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Confidence Level</span>
+<div class="flex gap-px">
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-primary border border-primary"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+<div class="w-4 h-4 bg-surface border border-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="bg-surface-container-low dark:bg-surface-container-low text-primary dark:text-primary fixed bottom-0 w-full z-50 border-t border-outline-variant lg:hidden flex justify-around items-center pb-safe h-16">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full pt-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps text-[10px]">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full pt-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="exercise">exercise</span>
+<span class="font-label-caps text-label-caps text-[10px]">Workouts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary border-t-2 border-primary active:scale-90 transition-transform w-full h-full pt-1 bg-surface-container-highest/50" href="#">
+<span class="material-symbols-outlined text-[24px] fill" data-icon="assignment" data-weight="fill">assignment</span>
+<span class="font-label-caps text-label-caps text-[10px] font-bold">Tasks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform w-full h-full pt-1" href="#">
+<span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Progress &amp; Reflection</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#ab8980",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "surface": "#131313",
+                    "primary-container": "#cc3300",
+                    "secondary-container": "#474746",
+                    "on-primary": "#611300",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-tertiary": "#2f3131",
+                    "inverse-on-surface": "#313030",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#3a3939",
+                    "primary": "#ffb5a1",
+                    "on-background": "#e5e2e1",
+                    "error": "#ffb4ab",
+                    "tertiary-container": "#6b6d6d",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "primary-fixed-dim": "#ffb5a1",
+                    "inverse-surface": "#e5e2e1",
+                    "on-secondary": "#313030",
+                    "secondary": "#c8c6c5",
+                    "surface-variant": "#353534",
+                    "on-tertiary-container": "#efeff0",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-tint": "#ffb5a1",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#ffdbd1",
+                    "surface-dim": "#131313",
+                    "tertiary": "#c6c6c7",
+                    "on-primary-container": "#ffece7",
+                    "background": "#131313",
+                    "outline-variant": "#5b4039",
+                    "on-secondary-container": "#b7b5b4",
+                    "on-primary-fixed": "#3c0800",
+                    "secondary-fixed": "#e5e2e1",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-surface": "#e5e2e1",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#e4beb4",
+                    "inverse-primary": "#b22b00",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "on-secondary-fixed-variant": "#474746",
+                    "on-primary-fixed-variant": "#881f00",
+                    "surface-container-low": "#1c1b1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px", /* Enforcing no rounded corners as per guidance */
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "0px"
+            },
+            "spacing": {
+                    "xl": "80px",
+                    "margin": "32px",
+                    "base": "8px",
+                    "lg": "48px",
+                    "md": "24px",
+                    "sm": "12px",
+                    "gutter": "24px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Archivo Narrow"
+                    ],
+                    "display-lg-mobile": [
+                            "Archivo Narrow"
+                    ],
+                    "headline-lg": [
+                            "Archivo Narrow"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "data-point": [
+                            "JetBrains Mono"
+                    ],
+                    "label-caps": [
+                            "JetBrains Mono"
+                    ],
+                    "headline-xl": [
+                            "Archivo Narrow"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "72px",
+                            {
+                                    "lineHeight": "80px",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "48px",
+                            {
+                                    "lineHeight": "52px",
+                                    "letterSpacing": "-0.04em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "data-point": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-xl": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&family=Inter:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+        
+        body {
+            background-color: #0D0D0D; /* Pure Obsidian Level 0 */
+            color: #e5e2e1;
+            /* Subtle grain texture overlay for tactile grit */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+        }
+
+        /* Material Symbols Outline Class */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Hard Borders & Tonal Layering */
+        .surface-card {
+            background-color: #1A1A1A; /* Level 1 */
+            border: 1px solid #2A2A2A;
+            border-radius: 0px !important;
+        }
+        
+        .surface-input {
+            background-color: #0D0D0D;
+            border: 1px solid #1A1A1A;
+            border-radius: 0px !important;
+        }
+        
+        .surface-input:focus {
+            border-color: #ffb5a1; /* Primary */
+            outline: none;
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0D0D0D; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A2A; 
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container border-r border-outline-variant p-md z-40">
+<div class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary uppercase">Spartan 001</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Day 12 of 30</p>
+</div>
+<ul class="flex flex-col gap-base flex-grow">
+<!-- Dashboard (Inactive) -->
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-label-caps text-label-caps uppercase">Dashboard</span>
+</a>
+</li>
+<!-- Training (Inactive) -->
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-caps text-label-caps uppercase">Training</span>
+</a>
+</li>
+<!-- Mindset (Inactive) -->
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-caps text-label-caps uppercase">Mindset</span>
+</a>
+</li>
+<!-- Performance (Inactive) -->
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-caps text-label-caps uppercase">Performance</span>
+</a>
+</li>
+<!-- Mission Logs (Active) - Mapped to Reflection -->
+<li>
+<a class="flex items-center gap-4 p-3 text-on-primary bg-primary font-bold border-l-4 border-on-primary-fixed-variant active:brightness-125" href="#">
+<span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+<span class="font-label-caps text-label-caps uppercase">Mission Logs</span>
+</a>
+</li>
+</ul>
+<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps uppercase py-3 border border-transparent hover:bg-white hover:text-black transition-colors duration-150 mb-lg">
+            DEPLOY MISSION
+        </button>
+<ul class="flex flex-col gap-base mt-auto">
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-caps text-label-caps uppercase">Support</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-caps text-label-caps uppercase">Logout</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 lg:ml-64 flex flex-col min-h-screen pb-20 lg:pb-0">
+<!-- TopAppBar (Visible on Mobile & Desktop) -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline-variant z-30">
+<div class="flex justify-between items-center px-margin py-base w-full max-w-[1200px] mx-auto">
+<div class="font-display-lg-mobile text-display-lg-mobile uppercase tracking-tighter text-primary dark:text-primary">
+                    MISSION CONTROL
+                </div>
+<div class="flex gap-4">
+<button class="text-on-surface-variant hover:bg-surface-bright transition-colors p-2 active:scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-bright transition-colors p-2 active:scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 w-full max-w-[1200px] mx-auto p-4 md:p-8 lg:p-margin flex flex-col gap-xl">
+<!-- Page Header -->
+<section class="border-b border-surface-variant pb-6">
+<h2 class="font-headline-xl text-headline-xl text-on-surface uppercase tracking-tight">Phase 1: Debrief</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Log your physical state and mental clarity.</p>
+</section>
+<!-- Grid Layout for Desktop -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Visual & Stats (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Photo Log -->
+<section class="surface-card p-6 flex flex-col gap-6">
+<div class="flex justify-between items-end border-b border-surface-variant pb-4">
+<h3 class="font-headline-lg text-headline-lg uppercase text-primary">Visual Recon</h3>
+<span class="font-data-point text-data-point text-on-surface-variant">Day 01 vs Day 12</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Before Photo -->
+<div class="relative group cursor-pointer border border-surface-variant">
+<div class="absolute top-2 left-2 bg-background/80 px-2 py-1 font-label-caps text-label-caps uppercase z-10 text-on-surface">Baseline</div>
+<img alt="Before photo" class="w-full h-[300px] object-cover grayscale opacity-70 group-hover:opacity-100 transition-opacity" data-alt="A gritty, desaturated black and white photo of a fitness athlete's physique before starting a grueling training program. The lighting is harsh and directional from overhead, casting deep shadows across the torso to emphasize muscle definition against a stark, pure black obsidian background. The aesthetic is raw, industrial, and uncompromising, fitting a modern spartan theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHEAlMntin4blZSJnAvjgGzVcKRDd8wV0uJGQUxJTECOfEtIQqwAY4lMSdQ6Scdiq_RVhROyV5vFM1-ZXLL0klprGriIbcEieeDAKRO4YR_sxynKCHCc-GhFMLgmWCJFiudFxHD7IhH0M7JpGXVUAZbxBNNhNI88hZ56OlyedyZsO2qk9GeaDRAHgK5tM0lS9-y4r687fdAFyw-0relckm_BBkiULOicfm1BR9n1i3t3osKEYXi74fmmEvionRMwOonvr79Zyjqmc"/>
+</div>
+<!-- Current Photo -->
+<div class="relative group cursor-pointer border border-primary">
+<div class="absolute top-2 left-2 bg-primary px-2 py-1 font-label-caps text-label-caps uppercase z-10 text-on-primary">Current</div>
+<img alt="Current photo" class="w-full h-[300px] object-cover filter contrast-125 saturate-50 group-hover:saturate-100 transition-all" data-alt="A high-contrast fitness physique photo of a muscular athlete showing progress. The lighting is dramatic and moody, utilizing strong rim light to highlight the deltoids and chest against a dark charcoal environment. The color palette is slightly desaturated with intense, aggressive highlights, perfectly aligning with a premium, heavy-duty performance tracker aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHNfErb0wSMBDlzH4_2DaKulNQTgFWb8FAddvzSUXqjNzctw9DZjse1fk7P80Z1qUoLnjyXUQwKibKXt6WaVrWoOSZyGtCnXZbCMDo3OvoJDBD7hXgRIu9tuLQ0sirLe7JOhUsnffeSQDbu4rnryoqir-EYrbwcwlKWZWngkmpDxSba2UD-UcfV7ihwYCQB_CXOKNPnW2kkyez4betVFGF8kuQYGLf3I0444B9UrcNaIHJ25gKtWBE2qvrEDLOKE38tQSXWmtoYnE"/>
+</div>
+</div>
+<button class="w-full bg-transparent border-2 border-on-surface text-on-surface font-label-caps text-label-caps uppercase py-3 hover:bg-on-surface hover:text-background transition-colors duration-150">
+                            UPLOAD NEW SITREP
+                        </button>
+</section>
+<!-- Weekly Review Stats -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Stat Card 1 -->
+<div class="surface-card p-6 flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Discipline Score</span>
+<div class="font-data-point text-data-point text-primary text-4xl mt-auto">92%</div>
+<!-- Linear segmented bar -->
+<div class="flex gap-1 mt-2">
+<div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div>
+<div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-primary"></div><div class="h-2 flex-1 bg-surface-variant"></div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="surface-card p-6 flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Reps Executed</span>
+<div class="font-data-point text-data-point text-on-surface text-4xl mt-auto">1,450</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="surface-card p-6 flex flex-col gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Rest Quality</span>
+<div class="font-data-point text-data-point text-on-surface text-4xl mt-auto">6.2 <span class="text-lg text-on-surface-variant">HRS</span></div>
+</div>
+</section>
+</div>
+<!-- Right Column: Journal & Heatmap (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Completion Heatmap -->
+<section class="surface-card p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-lg text-headline-lg uppercase text-on-surface">Consistency</h3>
+<span class="material-symbols-outlined text-primary" data-icon="local_fire_department">local_fire_department</span>
+</div>
+<div class="grid grid-cols-7 gap-2">
+<!-- Days 1-14 (Simulated Heatmap) -->
+<div class="aspect-square bg-primary/20 border border-primary/50"></div>
+<div class="aspect-square bg-primary/40 border border-primary/50"></div>
+<div class="aspect-square bg-primary/80 border border-primary"></div>
+<div class="aspect-square bg-primary border border-primary"></div>
+<div class="aspect-square bg-primary/60 border border-primary"></div>
+<div class="aspect-square bg-surface-variant"></div>
+<div class="aspect-square bg-primary/90 border border-primary"></div>
+<div class="aspect-square bg-primary border border-primary"></div>
+<div class="aspect-square bg-primary border border-primary"></div>
+<div class="aspect-square bg-primary/70 border border-primary"></div>
+<div class="aspect-square bg-primary border border-primary shadow-[0_0_8px_rgba(255,181,161,0.5)]"></div> <!-- Today -->
+<div class="aspect-square bg-surface border border-surface-variant"></div>
+<div class="aspect-square bg-surface border border-surface-variant"></div>
+<div class="aspect-square bg-surface border border-surface-variant"></div>
+</div>
+<div class="flex justify-between mt-4 font-label-caps text-label-caps text-on-surface-variant">
+<span>DAY 1</span>
+<span>TODAY</span>
+</div>
+</section>
+<!-- Journaling Area -->
+<section class="flex flex-col gap-4 flex-1">
+<div class="border-b border-primary pb-2">
+<h3 class="font-headline-lg text-headline-lg uppercase text-primary">Interrogation</h3>
+</div>
+<label class="font-label-caps text-label-caps uppercase text-on-surface mt-2 block" for="journal">
+                            PROMPT: What makes a man trustworthy?
+                        </label>
+<textarea class="surface-input w-full flex-1 min-h-[250px] p-4 text-on-surface font-body-md resize-none transition-colors" id="journal" placeholder="Log your thoughts here..."></textarea>
+<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps uppercase py-4 border border-transparent hover:bg-white hover:text-black transition-colors duration-150 mt-4">
+                            SEAL LOG
+                        </button>
+</section>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="lg:hidden fixed bottom-0 w-full z-50 bg-surface-container-low dark:bg-surface-container-low border-t border-outline-variant pb-safe h-16 flex justify-around items-center">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps uppercase">Home</span>
+</a>
+<!-- Workouts -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="exercise">exercise</span>
+<span class="font-label-caps text-label-caps uppercase">Workouts</span>
+</a>
+<!-- Tasks -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-caps text-label-caps uppercase">Tasks</span>
+</a>
+<!-- Profile (Active - mapped to reflection/progress) -->
+<a class="flex flex-col items-center justify-center text-primary border-t-2 border-primary pt-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-label-caps uppercase">Profile</span>
+</a>
+</nav>
+</body></html>
