@@ -1141,6 +1141,7 @@
                                         <button class="apex-action secondary" type="button" id="apex-session-next">Next</button>
                                         <button class="apex-action danger" type="button" id="apex-session-end">End</button>
                                         <button class="apex-action secondary" type="button" id="apex-session-tts">Voice Off</button>
+                                        <button class="apex-action secondary" type="button" id="apex-session-tts-test">Test Voice</button>
                                     </div>
                                     <div class="apex-session-meta">
                                         <span>Start<strong id="apex-session-start-time">--</strong></span>
@@ -1603,6 +1604,8 @@
         let apexTimer = null;
         let apexTimerRemaining = 180;
         let apexWorkoutTicker = null;
+        let apexWorkoutVoice = null;
+        let apexWorkoutUtterance = null;
 
         function loadApexState() {
             try {
@@ -1983,22 +1986,73 @@
             apexState.completed[dayNumber] = Array.from(done);
         }
 
-        function toggleWorkoutTts() {
-            if (!('speechSynthesis' in window)) return;
-            apexState.ttsEnabled = !apexState.ttsEnabled;
-            if (!apexState.ttsEnabled) window.speechSynthesis.cancel();
-            saveApexState();
-            renderWorkoutSession();
-            speakWorkout(apexState.ttsEnabled ? 'Voice cues enabled.' : '');
+        function canUseWorkoutTts() {
+            return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
         }
 
-        function speakWorkout(message) {
-            if (!apexState.ttsEnabled || !message || !('speechSynthesis' in window)) return;
+        function primeWorkoutTts() {
+            if (!canUseWorkoutTts()) return;
+            refreshWorkoutVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                refreshWorkoutVoices();
+                if (document.getElementById('apex-session-tts')) renderWorkoutSession();
+            };
+        }
+
+        function refreshWorkoutVoices() {
+            if (!canUseWorkoutTts()) return [];
+            const voices = window.speechSynthesis.getVoices();
+            apexWorkoutVoice = voices.find(voice => /^en[-_]/i.test(voice.lang) && voice.localService)
+                || voices.find(voice => /^en[-_]/i.test(voice.lang))
+                || voices.find(voice => voice.default)
+                || voices[0]
+                || null;
+            return voices;
+        }
+
+        function toggleWorkoutTts() {
+            if (!canUseWorkoutTts()) return;
+            apexState.ttsEnabled = !apexState.ttsEnabled;
+            if (!apexState.ttsEnabled) {
+                window.speechSynthesis.cancel();
+                apexWorkoutUtterance = null;
+            }
+            saveApexState();
+            renderWorkoutSession();
+            if (apexState.ttsEnabled) {
+                speakWorkout('Voice cues enabled. This is a test. You should hear Apex workout instructions now.', { force: true });
+            }
+        }
+
+        function testWorkoutTts() {
+            if (!canUseWorkoutTts()) return;
+            apexState.ttsEnabled = true;
+            saveApexState();
+            renderWorkoutSession();
+            speakWorkout('Voice test. Next exercise cues will sound like this.', { force: true });
+        }
+
+        function speakWorkout(message, options = {}) {
+            if ((!apexState.ttsEnabled && !options.force) || !message || !canUseWorkoutTts()) return;
+            refreshWorkoutVoices();
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(message);
+            if (apexWorkoutVoice) utterance.voice = apexWorkoutVoice;
+            utterance.lang = apexWorkoutVoice?.lang || 'en-US';
             utterance.rate = 0.92;
             utterance.pitch = 0.9;
+            utterance.volume = 1;
+            utterance.onend = () => {
+                apexWorkoutUtterance = null;
+            };
+            utterance.onerror = () => {
+                apexWorkoutUtterance = null;
+            };
+            apexWorkoutUtterance = utterance;
             window.speechSynthesis.speak(utterance);
+            window.setTimeout(() => {
+                if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+            }, 80);
         }
 
         function renderWorkoutSession() {
@@ -2037,8 +2091,11 @@
             document.getElementById('apex-session-pause').textContent = session ? (session.isRunning ? 'Pause' : 'Resume') : 'Pause';
             document.getElementById('apex-session-next').textContent = session && session.stepIndex >= steps.length - 1 ? 'Finish' : 'Next';
             const ttsButton = document.getElementById('apex-session-tts');
-            ttsButton.textContent = 'speechSynthesis' in window ? (apexState.ttsEnabled ? 'Voice On' : 'Voice Off') : 'TTS Unavailable';
-            ttsButton.disabled = !('speechSynthesis' in window);
+            const ttsTestButton = document.getElementById('apex-session-tts-test');
+            const ttsReady = canUseWorkoutTts();
+            ttsButton.textContent = ttsReady ? (apexState.ttsEnabled ? 'Voice On' : 'Voice Off') : 'TTS Unavailable';
+            ttsButton.disabled = !ttsReady;
+            ttsTestButton.disabled = !ttsReady;
 
             document.getElementById('apex-session-list').innerHTML = renderSessionStepList(steps, session);
             document.getElementById('apex-session-last').textContent = getLastSessionSummary();
@@ -2376,6 +2433,7 @@
         document.getElementById('apex-session-next').addEventListener('click', () => advanceWorkoutStep(false));
         document.getElementById('apex-session-end').addEventListener('click', () => completeWorkoutSession('ended'));
         document.getElementById('apex-session-tts').addEventListener('click', toggleWorkoutTts);
+        document.getElementById('apex-session-tts-test').addEventListener('click', testWorkoutTts);
         document.getElementById('apex-training-start-workout').addEventListener('click', () => startWorkoutSession(getDay()));
         document.getElementById('apex-note').addEventListener('input', event => {
             apexState.notes[apexState.currentDay] = event.target.value;
@@ -2394,6 +2452,7 @@
         });
 
         updateTimerLabel();
+        primeWorkoutTts();
         renderApex();
         startWorkoutTicker();
     </script>
