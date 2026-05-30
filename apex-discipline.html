@@ -546,6 +546,19 @@
             color: var(--apex-danger);
         }
 
+        .apex-action:disabled,
+        .apex-icon-action:disabled {
+            cursor: not-allowed;
+            opacity: 0.42;
+        }
+
+        .apex-action:disabled:hover,
+        .apex-icon-action:disabled:hover {
+            border-color: var(--apex-line);
+            background: transparent;
+            color: var(--apex-text);
+        }
+
         .apex-icon-action {
             width: 42px;
             display: inline-grid;
@@ -677,6 +690,140 @@
 
         .apex-workout-stage li strong {
             color: var(--apex-text);
+        }
+
+        .apex-session-panel {
+            display: grid;
+            gap: 14px;
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid var(--apex-line-hot);
+            background: #120f0e;
+        }
+
+        .apex-session-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 14px;
+            min-width: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--apex-line);
+        }
+
+        .apex-session-head h4 {
+            color: var(--apex-text);
+            font-family: var(--apex-font-head);
+            font-size: clamp(1.45rem, 3vw, 2.05rem);
+            line-height: 1.02;
+            text-transform: uppercase;
+        }
+
+        .apex-session-clock {
+            color: var(--apex-primary);
+            font-family: var(--apex-font-data);
+            font-size: clamp(2rem, 6vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1;
+            text-align: right;
+        }
+
+        .apex-session-meta {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .apex-session-meta span {
+            display: grid;
+            gap: 4px;
+            padding: 10px;
+            border: 1px solid var(--apex-line);
+            background: #0d0d0d;
+            color: var(--apex-muted);
+            font-family: var(--apex-font-data);
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .apex-session-meta strong {
+            color: var(--apex-text);
+            font-size: 0.9rem;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .apex-session-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .apex-session-progress {
+            display: grid;
+            grid-template-columns: repeat(var(--steps, 1), minmax(4px, 1fr));
+            gap: 3px;
+        }
+
+        .apex-session-block {
+            height: 10px;
+            border: 1px solid var(--apex-line);
+            background: #080808;
+        }
+
+        .apex-session-block.done,
+        .apex-session-block.active {
+            border-color: var(--apex-primary);
+            background: var(--apex-primary);
+        }
+
+        .apex-session-up-next {
+            display: grid;
+            gap: 6px;
+            min-width: 0;
+            color: var(--apex-muted);
+            font-size: 0.86rem;
+            line-height: 1.35;
+        }
+
+        .apex-session-up-next strong {
+            color: var(--apex-text);
+        }
+
+        .apex-session-step-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .apex-session-step {
+            display: grid;
+            grid-template-columns: 74px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--apex-line);
+            background: #0d0d0d;
+            color: var(--apex-muted);
+            font-size: 0.84rem;
+            line-height: 1.35;
+        }
+
+        .apex-session-step.active {
+            border-color: var(--apex-primary);
+            color: var(--apex-text);
+            background: #1b1412;
+        }
+
+        .apex-session-step strong {
+            color: var(--apex-text);
+        }
+
+        .apex-session-step span {
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         .apex-empty {
@@ -812,6 +959,43 @@
                 display: none;
             }
 
+            .apex-session-head,
+            .apex-session-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .apex-session-panel {
+                padding: 12px;
+            }
+
+            .apex-session-head .apex-muted {
+                overflow-wrap: anywhere;
+            }
+
+            .apex-session-controls {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .apex-session-controls .apex-action {
+                width: 100%;
+                min-width: 0;
+                padding: 0 8px;
+                font-size: 0.66rem;
+            }
+
+            .apex-session-controls .apex-action.primary {
+                grid-column: 1 / -1;
+            }
+
+            .apex-session-step {
+                grid-template-columns: 1fr;
+            }
+
+            .apex-session-clock {
+                text-align: left;
+            }
+
             .apex-stats,
             .apex-day-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -942,6 +1126,32 @@
                                     </div>
                                     <span class="apex-label" id="apex-workout-meta">5 days/week</span>
                                 </div>
+                                <div class="apex-session-panel" id="apex-session-panel" aria-live="polite">
+                                    <div class="apex-session-head">
+                                        <div>
+                                            <p class="apex-label" id="apex-session-status">Ready</p>
+                                            <h4 id="apex-session-title">Start Today's Workout</h4>
+                                            <p class="apex-muted" id="apex-session-detail">Exercises, timers, rests, start/end time, and duration.</p>
+                                        </div>
+                                        <div class="apex-session-clock" id="apex-session-clock">00:00</div>
+                                    </div>
+                                    <div class="apex-session-controls">
+                                        <button class="apex-action primary" type="button" id="apex-session-start">Start Workout</button>
+                                        <button class="apex-action secondary" type="button" id="apex-session-pause">Pause</button>
+                                        <button class="apex-action secondary" type="button" id="apex-session-next">Next</button>
+                                        <button class="apex-action danger" type="button" id="apex-session-end">End</button>
+                                        <button class="apex-action secondary" type="button" id="apex-session-tts">Voice Off</button>
+                                    </div>
+                                    <div class="apex-session-meta">
+                                        <span>Start<strong id="apex-session-start-time">--</strong></span>
+                                        <span>Duration<strong id="apex-session-duration">00:00</strong></span>
+                                        <span>End<strong id="apex-session-end-time">--</strong></span>
+                                        <span>Step<strong id="apex-session-step-count">0 / 0</strong></span>
+                                    </div>
+                                    <div class="apex-session-progress" id="apex-session-progress"></div>
+                                    <div class="apex-session-up-next" id="apex-session-list"></div>
+                                    <p class="apex-muted" id="apex-session-last">No workout sessions logged yet.</p>
+                                </div>
                                 <div class="apex-workout-plan" id="apex-workout-plan"></div>
                             </section>
                         </div>
@@ -1006,6 +1216,9 @@
                                 </div>
                                 <span class="apex-label" id="apex-training-workout-meta">30 min</span>
                             </div>
+                            <div class="apex-pill-row">
+                                <button class="apex-action primary" type="button" id="apex-training-start-workout">Start Selected Day</button>
+                            </div>
                             <div class="apex-workout-plan" id="apex-training-workout-plan"></div>
                         </section>
                     </div>
@@ -1021,6 +1234,16 @@
                             <button class="apex-action danger" type="button" id="apex-reset-all">Reset All</button>
                         </div>
                         <div class="apex-log-list" id="apex-log-list"></div>
+                    </section>
+                    <section class="apex-panel">
+                        <div class="apex-panel-title">
+                            <div>
+                                <p class="apex-label">Start / End / Duration</p>
+                                <h3>Workout Sessions</h3>
+                            </div>
+                            <span class="apex-label" id="apex-session-log-count">0 Sessions</span>
+                        </div>
+                        <div class="apex-log-list" id="apex-workout-session-log"></div>
                     </section>
                 </section>
             </div>
@@ -1379,6 +1602,7 @@
         let apexView = getInitialApexView();
         let apexTimer = null;
         let apexTimerRemaining = 180;
+        let apexWorkoutTicker = null;
 
         function loadApexState() {
             try {
@@ -1394,7 +1618,28 @@
             state.currentDay = Math.max(1, Math.min(30, Number(state.currentDay) || 1));
             state.completed = state.completed && typeof state.completed === 'object' && !Array.isArray(state.completed) ? state.completed : {};
             state.notes = state.notes && typeof state.notes === 'object' && !Array.isArray(state.notes) ? state.notes : {};
+            state.workoutSessions = Array.isArray(state.workoutSessions) ? state.workoutSessions.slice(-30) : [];
+            state.activeWorkout = normalizeApexWorkoutSession(state.activeWorkout);
+            state.ttsEnabled = state.ttsEnabled === true;
             return state;
+        }
+
+        function normalizeApexWorkoutSession(raw) {
+            if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+            const day = Math.max(1, Math.min(30, Number(raw.day) || 1));
+            const startedAt = Number.isNaN(Date.parse(raw.startedAt || '')) ? new Date().toISOString() : raw.startedAt;
+            return {
+                id: String(raw.id || `workout-${Date.now()}`),
+                day,
+                block: String(raw.block || getPrimaryBlock(getDay(day))),
+                startedAt,
+                endedAt: raw.endedAt && !Number.isNaN(Date.parse(raw.endedAt)) ? raw.endedAt : '',
+                elapsedSeconds: Math.max(0, Math.floor(Number(raw.elapsedSeconds) || 0)),
+                stepElapsedSeconds: Math.max(0, Math.floor(Number(raw.stepElapsedSeconds) || 0)),
+                stepIndex: Math.max(0, Math.floor(Number(raw.stepIndex) || 0)),
+                lastTickAt: Math.max(0, Number(raw.lastTickAt) || Date.now()),
+                isRunning: raw.isRunning === true
+            };
         }
 
         function saveApexState() {
@@ -1528,6 +1773,319 @@
             `).join('');
         }
 
+        function createWorkoutStep(stage, label, detail, durationSeconds = 0, kind = 'exercise') {
+            return { stage, label, detail, durationSeconds, kind };
+        }
+
+        function addWarmupSteps(steps) {
+            steps.push(
+                createWorkoutStep('Warm-up', 'Jumping Jacks', 'Move lightly and breathe steadily.', 30, 'timer'),
+                createWorkoutStep('Warm-up', 'Arm Circles', 'Forward and backward. Keep shoulders relaxed.', 30, 'timer'),
+                createWorkoutStep('Warm-up', 'High Knees', 'Fast feet, tall posture.', 30, 'timer'),
+                createWorkoutStep('Warm-up', 'Bodyweight Squats', '20 controlled reps. Tap Next when done.')
+            );
+        }
+
+        function addRoundSteps(steps, stage, round, moves, restSeconds = 30, totalRounds = 3) {
+            moves.forEach(move => {
+                const timedDetail = move[2] ? move[1] : `${move[1]}. Tap Next when done.`;
+                steps.push(createWorkoutStep(`${stage} / Round ${round}`, move[0], timedDetail, move[2] || 0, move[3] || 'exercise'));
+            });
+            steps.push(createWorkoutStep(`${stage} / Round ${round}`, 'Rest', `Recover before ${round < totalRounds ? `round ${round + 1}` : 'the next stage'}.`, restSeconds, 'rest'));
+        }
+
+        function buildWorkoutSteps(day) {
+            const block = getPrimaryBlock(day);
+            const steps = [];
+            if (block === 'Workout A') {
+                addWarmupSteps(steps);
+                for (let round = 1; round <= 3; round += 1) {
+                    addRoundSteps(steps, 'Circuit 1', round, [
+                        ['Dumbbell Goblet Squat', '5 kg / 15 reps'],
+                        ['Push-ups', '8-15 reps'],
+                        ['Dumbbell Shoulder Press', '12 reps']
+                    ]);
+                }
+                for (let round = 1; round <= 3; round += 1) {
+                    addRoundSteps(steps, 'Circuit 2', round, [
+                        ['Walking Lunges', '12 each leg'],
+                        ['Dumbbell Floor Press', '15 reps'],
+                        ['Plank', '45 seconds. Brace the core and breathe.', 45, 'timer']
+                    ]);
+                }
+                steps.push(
+                    createWorkoutStep('Finisher', '5-Minute Conditioning', 'Repeat: mountain climbers x20, squat jumps x10, burpees x5.', 300, 'timer'),
+                    createWorkoutStep('Cool Down', 'Stretch and Breathe', 'Hamstring stretch, chest stretch, deep breathing.', 120, 'timer')
+                );
+                return steps;
+            }
+
+            if (block === 'Workout B') {
+                addWarmupSteps(steps);
+                for (let round = 1; round <= 3; round += 1) {
+                    addRoundSteps(steps, 'Circuit 1', round, [
+                        ['Dumbbell Bent-over Rows', '15 reps'],
+                        ['Bicep Curls', '15 reps'],
+                        ['Reverse Lunges', '12 each leg']
+                    ]);
+                }
+                for (let round = 1; round <= 3; round += 1) {
+                    addRoundSteps(steps, 'Circuit 2', round, [
+                        ['Renegade Row', '10 each side'],
+                        ['Hammer Curl', '12 reps'],
+                        ['Russian Twists', '20 reps']
+                    ]);
+                }
+                for (let round = 1; round <= 3; round += 1) {
+                    steps.push(
+                        createWorkoutStep(`Finisher / Round ${round}`, 'High Knees', 'Drive knees up and stay light.', 30, 'timer'),
+                        createWorkoutStep(`Finisher / Round ${round}`, 'Plank', 'Brace the core. Breathe steadily.', 30, 'timer'),
+                        createWorkoutStep(`Finisher / Round ${round}`, 'Leg Raises', '15 controlled reps. Tap Next when done.')
+                    );
+                    if (round < 3) steps.push(createWorkoutStep(`Finisher / Round ${round}`, 'Rest', 'Recover for the next finisher round.', 20, 'rest'));
+                }
+                steps.push(createWorkoutStep('Cool Down', 'Stretch and Breathe', 'Hamstring stretch, chest stretch, deep breathing.', 120, 'timer'));
+                return steps;
+            }
+
+            if (block === 'Walk') {
+                return [
+                    createWorkoutStep('Walk Protocol', '30-Minute Walk', 'Easy pace. Tall spine, relaxed shoulders, steady breathing.', 1800, 'timer'),
+                    createWorkoutStep('Walk Protocol', 'Posture Check', 'Write one quick note about energy, breath, or mood.')
+                ];
+            }
+
+            if (block === 'Rest') {
+                return [
+                    createWorkoutStep('Recovery Protocol', 'Recovery Check', 'Sleep, hydration, light movement, and no forced intensity.'),
+                    createWorkoutStep('Recovery Protocol', 'Breathing Reset', 'Slow nasal breathing. Let the body recover.', 120, 'timer')
+                ];
+            }
+
+            return [
+                createWorkoutStep('Review Protocol', 'Progress Audit', 'Complete the assigned review task for this day.'),
+                createWorkoutStep('Review Protocol', 'Recovery Reset', 'Keep sleep, water, steps, and reflection intact.')
+            ];
+        }
+
+        function getSessionSteps(session = apexState.activeWorkout) {
+            const day = getDay(session?.day || apexState.currentDay);
+            return buildWorkoutSteps(day);
+        }
+
+        function getWorkoutElapsed(session) {
+            if (!session) return 0;
+            const base = Math.max(0, Math.floor(Number(session.elapsedSeconds) || 0));
+            if (!session.isRunning) return base;
+            return base + Math.max(0, Math.floor((Date.now() - Number(session.lastTickAt || Date.now())) / 1000));
+        }
+
+        function getWorkoutStepElapsed(session) {
+            if (!session) return 0;
+            const base = Math.max(0, Math.floor(Number(session.stepElapsedSeconds) || 0));
+            if (!session.isRunning) return base;
+            return base + Math.max(0, Math.floor((Date.now() - Number(session.lastTickAt || Date.now())) / 1000));
+        }
+
+        function commitWorkoutClock(session = apexState.activeWorkout) {
+            if (!session) return null;
+            session.elapsedSeconds = getWorkoutElapsed(session);
+            session.stepElapsedSeconds = getWorkoutStepElapsed(session);
+            session.lastTickAt = Date.now();
+            return session;
+        }
+
+        function startWorkoutSession(day = getDay()) {
+            if (apexState.activeWorkout) {
+                if (!window.confirm('A workout is already active. End it and start this day instead?')) return;
+                completeWorkoutSession('ended', false);
+            }
+            const block = getPrimaryBlock(day);
+            apexState.currentDay = day.day;
+            apexState.activeWorkout = {
+                id: `workout-${Date.now()}`,
+                day: day.day,
+                block,
+                startedAt: new Date().toISOString(),
+                endedAt: '',
+                elapsedSeconds: 0,
+                stepElapsedSeconds: 0,
+                stepIndex: 0,
+                lastTickAt: Date.now(),
+                isRunning: true
+            };
+            saveApexState();
+            setApexView('mission');
+            speakWorkout(`Started Day ${day.day}. ${block}. ${getSessionSteps(apexState.activeWorkout)[0]?.label || 'Begin'}.`);
+        }
+
+        function pauseWorkoutSession() {
+            const session = apexState.activeWorkout;
+            if (!session) return;
+            commitWorkoutClock(session);
+            session.isRunning = !session.isRunning;
+            session.lastTickAt = Date.now();
+            saveApexState();
+            renderWorkoutSession();
+            speakWorkout(session.isRunning ? 'Workout resumed.' : 'Workout paused.');
+        }
+
+        function advanceWorkoutStep(auto = false) {
+            const session = apexState.activeWorkout;
+            if (!session) return;
+            commitWorkoutClock(session);
+            const steps = getSessionSteps(session);
+            if (session.stepIndex >= steps.length - 1) {
+                completeWorkoutSession('complete');
+                return;
+            }
+            session.stepIndex += 1;
+            session.stepElapsedSeconds = 0;
+            session.lastTickAt = Date.now();
+            session.isRunning = true;
+            saveApexState();
+            renderWorkoutSession();
+            const step = steps[session.stepIndex];
+            speakWorkout(`${auto ? 'Next.' : 'Next exercise.'} ${step.label}. ${step.detail}`);
+        }
+
+        function completeWorkoutSession(reason = 'complete', shouldRender = true) {
+            const session = apexState.activeWorkout;
+            if (!session) return;
+            commitWorkoutClock(session);
+            const endedAt = new Date().toISOString();
+            const summary = {
+                id: session.id,
+                day: session.day,
+                block: session.block,
+                startedAt: session.startedAt,
+                endedAt,
+                durationSeconds: session.elapsedSeconds,
+                completed: reason === 'complete'
+            };
+            apexState.workoutSessions = [...(apexState.workoutSessions || []), summary].slice(-30);
+            if (reason === 'complete') markWorkoutMissionComplete(session.day);
+            apexState.activeWorkout = null;
+            saveApexState();
+            if (shouldRender) {
+                renderApex();
+                speakWorkout(`${reason === 'complete' ? 'Workout complete.' : 'Workout ended.'} Duration ${formatDurationWords(summary.durationSeconds)}.`);
+            }
+        }
+
+        function markWorkoutMissionComplete(dayNumber) {
+            const day = getDay(dayNumber);
+            const done = getCompletedSet(dayNumber);
+            const target = day.tasks.find(task => task[0] === 'physical')
+                || day.tasks.find(task => /walk|rest|recovery|review/i.test(`${task[0]} ${task[1]}`));
+            if (target) done.add(getTaskId(dayNumber, 'mission', target[0]));
+            if (day.tasks.some(task => task[0] === 'physical')) done.add(getTaskId(dayNumber, 'rule', 'workout'));
+            apexState.completed[dayNumber] = Array.from(done);
+        }
+
+        function toggleWorkoutTts() {
+            if (!('speechSynthesis' in window)) return;
+            apexState.ttsEnabled = !apexState.ttsEnabled;
+            if (!apexState.ttsEnabled) window.speechSynthesis.cancel();
+            saveApexState();
+            renderWorkoutSession();
+            speakWorkout(apexState.ttsEnabled ? 'Voice cues enabled.' : '');
+        }
+
+        function speakWorkout(message) {
+            if (!apexState.ttsEnabled || !message || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.rate = 0.92;
+            utterance.pitch = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function renderWorkoutSession() {
+            const session = apexState.activeWorkout;
+            const currentDay = session ? getDay(session.day) : getDay();
+            const steps = session ? getSessionSteps(session) : buildWorkoutSteps(currentDay);
+            const currentStep = steps[Math.min(session?.stepIndex || 0, Math.max(steps.length - 1, 0))];
+            const elapsed = getWorkoutElapsed(session);
+            const stepElapsed = getWorkoutStepElapsed(session);
+            const remaining = currentStep?.durationSeconds ? Math.max(0, currentStep.durationSeconds - stepElapsed) : stepElapsed;
+            const status = session ? `${session.isRunning ? 'Running' : 'Paused'} / Day ${session.day}` : `Ready / Day ${currentDay.day}`;
+            const title = session ? currentStep?.label || 'Workout' : `Start ${getPrimaryBlock(currentDay)}`;
+            const detail = session
+                ? `${currentStep?.stage || 'Workout'} - ${currentStep?.detail || 'Move to the next step when ready.'}`
+                : `${steps.length} steps with timers, rests, start/end time, and duration.`;
+
+            document.getElementById('apex-session-status').textContent = status;
+            document.getElementById('apex-session-title').textContent = title;
+            document.getElementById('apex-session-detail').textContent = detail;
+            document.getElementById('apex-session-clock').textContent = formatClock(remaining);
+            document.getElementById('apex-session-start-time').textContent = session ? formatSessionTime(session.startedAt) : '--';
+            document.getElementById('apex-session-duration').textContent = formatClock(elapsed);
+            document.getElementById('apex-session-end-time').textContent = session?.endedAt ? formatSessionTime(session.endedAt) : '--';
+            document.getElementById('apex-session-step-count').textContent = session ? `${session.stepIndex + 1} / ${steps.length}` : `0 / ${steps.length}`;
+
+            const progress = document.getElementById('apex-session-progress');
+            progress.style.setProperty('--steps', steps.length || 1);
+            progress.innerHTML = steps.map((step, index) => `
+                <span class="apex-session-block ${session && index < session.stepIndex ? 'done' : ''} ${session && index === session.stepIndex ? 'active' : ''}" title="${escapeApex(step.label)}"></span>
+            `).join('');
+
+            document.getElementById('apex-session-start').disabled = Boolean(session);
+            document.getElementById('apex-session-pause').disabled = !session;
+            document.getElementById('apex-session-next').disabled = !session;
+            document.getElementById('apex-session-end').disabled = !session;
+            document.getElementById('apex-session-pause').textContent = session ? (session.isRunning ? 'Pause' : 'Resume') : 'Pause';
+            document.getElementById('apex-session-next').textContent = session && session.stepIndex >= steps.length - 1 ? 'Finish' : 'Next';
+            const ttsButton = document.getElementById('apex-session-tts');
+            ttsButton.textContent = 'speechSynthesis' in window ? (apexState.ttsEnabled ? 'Voice On' : 'Voice Off') : 'TTS Unavailable';
+            ttsButton.disabled = !('speechSynthesis' in window);
+
+            document.getElementById('apex-session-list').innerHTML = renderSessionStepList(steps, session);
+            document.getElementById('apex-session-last').textContent = getLastSessionSummary();
+        }
+
+        function renderSessionStepList(steps, session) {
+            if (!steps.length) return '<span>No workout steps available for this day.</span>';
+            const index = session ? session.stepIndex : 0;
+            const windowed = session ? steps.slice(index, index + 5) : steps.slice(0, 5);
+            return `
+                <strong>${session ? 'Current and next' : 'Preview'}</strong>
+                <div class="apex-session-step-list">
+                    ${windowed.map((step, offset) => {
+                        const actualIndex = index + offset;
+                        return `
+                            <div class="apex-session-step ${session && actualIndex === session.stepIndex ? 'active' : ''}">
+                                <span>${escapeApex(step.stage)}</span>
+                                <span><strong>${escapeApex(step.label)}</strong> ${escapeApex(step.detail)}</span>
+                                <span>${step.durationSeconds ? escapeApex(formatClock(step.durationSeconds)) : 'Reps'}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function getLastSessionSummary() {
+            const sessions = Array.isArray(apexState.workoutSessions) ? apexState.workoutSessions : [];
+            const last = sessions[sessions.length - 1];
+            if (!last) return 'No workout sessions logged yet.';
+            return `Last: Day ${last.day} ${last.block} / ${formatSessionTime(last.startedAt)}-${formatSessionTime(last.endedAt)} / ${formatDurationWords(last.durationSeconds)}.`;
+        }
+
+        function renderWorkoutSessionLog() {
+            const sessions = Array.isArray(apexState.workoutSessions) ? [...apexState.workoutSessions].reverse() : [];
+            document.getElementById('apex-session-log-count').textContent = `${sessions.length} ${sessions.length === 1 ? 'Session' : 'Sessions'}`;
+            document.getElementById('apex-workout-session-log').innerHTML = sessions.length ? sessions.map(session => `
+                <button class="apex-log-card" type="button" data-apex-day="${session.day}" data-apex-open-mission="1">
+                    <span>
+                        <strong>Day ${session.day}: ${escapeApex(session.block)} ${session.completed ? 'Complete' : 'Ended'}</strong>
+                        <span class="apex-muted">Start ${escapeApex(formatSessionDateTime(session.startedAt))} / End ${escapeApex(formatSessionDateTime(session.endedAt))}</span>
+                    </span>
+                    <span class="apex-pill">${escapeApex(formatDurationWords(session.durationSeconds))}</span>
+                </button>
+            `).join('') : '<div class="apex-empty">No workout sessions yet. Start a guided session from Daily Mission.</div>';
+        }
+
         function renderDashboard() {
             const current = getDay();
             const week = getWeek();
@@ -1593,6 +2151,7 @@
                 metaId: 'apex-workout-meta',
                 holderId: 'apex-workout-plan'
             });
+            renderWorkoutSession();
             document.getElementById('apex-note').value = apexState.notes[current.day] || '';
             document.getElementById('apex-week-label').textContent = `Week ${week.week} / ${week.label}`;
         }
@@ -1640,6 +2199,7 @@
                     <span class="apex-pill">${item.completion}%</span>
                 </button>
             `).join('') : '<div class="apex-empty">No mission activity yet. Complete tasks or write a reflection to build the archive.</div>';
+            renderWorkoutSessionLog();
         }
 
         function renderApex() {
@@ -1690,6 +2250,37 @@
                 .replace(/'/g, '&#039;');
         }
 
+        function formatClock(totalSeconds) {
+            const safe = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+            const hours = Math.floor(safe / 3600);
+            const minutes = Math.floor((safe % 3600) / 60);
+            const seconds = safe % 60;
+            if (hours > 0) {
+                return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function formatDurationWords(totalSeconds) {
+            const safe = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+            const minutes = Math.floor(safe / 60);
+            const seconds = safe % 60;
+            if (minutes <= 0) return `${seconds}s`;
+            return `${minutes}m ${seconds}s`;
+        }
+
+        function formatSessionTime(value) {
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '--';
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatSessionDateTime(value) {
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '--';
+            return `${date.toLocaleDateString([], { month: 'short', day: 'numeric' })} ${formatSessionTime(value)}`;
+        }
+
         function exportApexProgress() {
             const blob = new Blob([JSON.stringify(apexState, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1735,6 +2326,20 @@
             updateTimerLabel();
         }
 
+        function startWorkoutTicker() {
+            if (apexWorkoutTicker) return;
+            apexWorkoutTicker = setInterval(() => {
+                const session = apexState.activeWorkout;
+                if (!session) return;
+                const step = getSessionSteps(session)[session.stepIndex];
+                if (session.isRunning && step?.durationSeconds && getWorkoutStepElapsed(session) >= step.durationSeconds) {
+                    advanceWorkoutStep(true);
+                    return;
+                }
+                renderWorkoutSession();
+            }, 1000);
+        }
+
         document.addEventListener('click', event => {
             const nav = event.target.closest('[data-apex-view]');
             if (nav) setApexView(nav.dataset.apexView);
@@ -1766,6 +2371,12 @@
         document.getElementById('apex-reset-day').addEventListener('click', resetCurrentDay);
         document.getElementById('apex-export').addEventListener('click', exportApexProgress);
         document.getElementById('apex-timer-toggle').addEventListener('click', toggleTimer);
+        document.getElementById('apex-session-start').addEventListener('click', () => startWorkoutSession(getDay()));
+        document.getElementById('apex-session-pause').addEventListener('click', pauseWorkoutSession);
+        document.getElementById('apex-session-next').addEventListener('click', () => advanceWorkoutStep(false));
+        document.getElementById('apex-session-end').addEventListener('click', () => completeWorkoutSession('ended'));
+        document.getElementById('apex-session-tts').addEventListener('click', toggleWorkoutTts);
+        document.getElementById('apex-training-start-workout').addEventListener('click', () => startWorkoutSession(getDay()));
         document.getElementById('apex-note').addEventListener('input', event => {
             apexState.notes[apexState.currentDay] = event.target.value;
             saveApexState();
@@ -1784,6 +2395,7 @@
 
         updateTimerLabel();
         renderApex();
+        startWorkoutTicker();
     </script>
 </body>
 </html>
