@@ -2905,44 +2905,82 @@
         }
         .clip-source-chips {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 20px;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 14px;
         }
         .clip-source-chip {
-            min-height: 118px;
+            min-height: 96px;
             display: grid;
-            grid-template-columns: 42px minmax(0, 1fr);
-            grid-template-rows: 1fr auto;
+            grid-template-columns: 74px minmax(0, 1fr) auto;
             align-items: center;
-            gap: 12px;
-            padding: 18px;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-left: 3px solid var(--clip-cyan);
+            gap: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255,255,255,0.07);
             border-radius: 8px;
-            background: rgba(255,255,255,0.035);
+            background: rgba(255,255,255,0.025);
             color: rgba(255,255,255,0.88);
         }
+        .clip-source-chip:hover {
+            background: rgba(255,255,255,0.045);
+            border-color: rgba(255,255,255,0.1);
+        }
         .clip-channel-avatar {
-            width: 38px;
-            height: 38px;
+            position: relative;
+            width: 74px;
+            height: 74px;
+            overflow: hidden;
+            flex: 0 0 auto;
             color: var(--clip-cyan);
+            font-size: 1rem;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .clip-channel-avatar img {
+            position: relative;
+            z-index: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .clip-channel-avatar span {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+        }
+        .clip-channel-avatar img + span {
+            display: none;
+        }
+        .clip-source-chip-copy {
+            min-width: 0;
+            display: grid;
+            gap: 6px;
         }
         .clip-source-chip-name {
             white-space: normal;
             overflow: visible;
             text-overflow: clip;
-            font-size: 0.96rem;
+            font-size: 1rem;
             font-weight: 850;
             line-height: 1.18;
         }
+        .clip-source-chip-meta {
+            min-width: 0;
+            color: rgba(255,255,255,0.56);
+            font-size: 0.76rem;
+            font-weight: 740;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         .clip-source-remove {
-            grid-column: 2;
             justify-self: end;
             width: auto;
-            height: 28px;
-            padding: 0 8px;
-            border-radius: 6px;
-            background: transparent;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.06);
             color: rgba(255,170,170,0.78);
             font-size: 0.72rem;
             font-weight: 800;
@@ -2960,8 +2998,7 @@
                 border-left: 0;
                 border-top: 1px solid rgba(255,255,255,0.06);
             }
-            .clip-library-grid,
-            .clip-source-chips {
+            .clip-library-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -3000,6 +3037,19 @@
             .clip-library-grid,
             .clip-source-chips {
                 grid-template-columns: 1fr;
+            }
+            .clip-source-chip {
+                grid-template-columns: 56px minmax(0, 1fr) auto;
+                gap: 12px;
+                min-height: 78px;
+            }
+            .clip-channel-avatar {
+                width: 56px;
+                height: 56px;
+                font-size: 0.82rem;
+            }
+            .clip-source-remove {
+                padding: 0 10px;
             }
             .clip-source-controls {
                 grid-template-columns: 1fr;
@@ -5089,6 +5139,7 @@
         let clipPlaybackSession = null;
         let clipPlayerPoll = null;
         let clipPlayerConnected = false;
+        let clipChannelAvatarTimers = [];
 
         function loadClipState() {
             try {
@@ -5143,6 +5194,47 @@
                 .replace(/[\u0000-\u001f]+/g, ' ')
                 .trim()
                 .slice(0, 80);
+        }
+
+        function getClipChannelInitials(source) {
+            const initials = String(source || '')
+                .toUpperCase()
+                .match(/[A-Z0-9]+/g)
+                ?.slice(0, 2)
+                .map(part => part[0])
+                .join('');
+            return initials || 'CM';
+        }
+
+        function getClipChannelHandle(source) {
+            const handle = normalizeSourceKey(source).replace(/\s+/g, '');
+            return handle ? `@${handle}` : '@channel';
+        }
+
+        function getClipChannelAvatarUrl(source, resolve = false) {
+            const params = new URLSearchParams({ source: normalizeSourceLabel(source) || 'Clip Mix' });
+            params.set('resolve', resolve ? '1' : '0');
+            return `/api/clip/channel-avatar?${params.toString()}`;
+        }
+
+        function refreshClipChannelAvatars(resolve = false) {
+            document.querySelectorAll('.clip-channel-avatar-img[data-channel-source]').forEach((img, index) => {
+                const source = img.dataset.channelSource || '';
+                const url = getClipChannelAvatarUrl(source, resolve);
+                img.src = resolve ? `${url}&avatarRefresh=${Date.now()}-${index}` : url;
+            });
+        }
+
+        function scheduleClipChannelAvatarRefresh() {
+            clipChannelAvatarTimers.forEach(timer => clearTimeout(timer));
+            if (getClipMenuView() !== 'channels') {
+                clipChannelAvatarTimers = [];
+                return;
+            }
+            clipChannelAvatarTimers = [
+                setTimeout(() => refreshClipChannelAvatars(true), 900),
+                setTimeout(() => refreshClipChannelAvatars(true), 5200)
+            ];
         }
 
         function normalizeClipSourceTiers(rawTiers) {
@@ -6145,8 +6237,14 @@
                         <div class="clip-source-chips">
                             ${sources.length ? sources.map(source => `
                                 <article class="clip-source-chip">
-                                    <span class="clip-channel-avatar">${escapeClipText(source.slice(0, 2).toUpperCase())}</span>
-                                    <span class="clip-source-chip-name">${escapeClipText(source)}</span>
+                                    <span class="clip-channel-avatar" aria-hidden="true">
+                                        <img class="clip-channel-avatar-img" src="${escapeClipText(getClipChannelAvatarUrl(source))}" data-channel-source="${escapeClipText(source)}" alt="" loading="lazy" decoding="async" onerror="this.remove();">
+                                        <span>${escapeClipText(getClipChannelInitials(source))}</span>
+                                    </span>
+                                    <span class="clip-source-chip-copy">
+                                        <span class="clip-source-chip-name">${escapeClipText(source)}</span>
+                                        <span class="clip-source-chip-meta">${escapeClipText(getClipChannelHandle(source))}</span>
+                                    </span>
                                     <button class="clip-source-remove" type="button" data-source-tier="${escapeClipText(option.key)}" data-source-name="${escapeClipText(source)}">Remove</button>
                                 </article>
                             `).join('') : '<span class="clip-taste-empty">No channels in this tier.</span>'}
@@ -6154,6 +6252,7 @@
                     </section>
                 `;
             }).join('');
+            scheduleClipChannelAvatarRefresh();
         }
 
         function addClipSource() {

@@ -32,6 +32,7 @@ CHANNEL_CACHE_PATH = Path("/tmp/browser-dashboard-clip-channel-cache.json")
 CLIP_CACHE_LOCK = threading.Lock()
 CHANNEL_CACHE_LOCK = threading.Lock()
 CHANNEL_RESOLVE_PENDING: set[str] = set()
+CHANNEL_AVATAR_PENDING: set[str] = set()
 PREFETCH_STATE = {"running": False}
 
 TOPICS = [
@@ -1315,6 +1316,38 @@ def text_from_runs(value: object) -> str:
     return ""
 
 
+def normalize_external_image_url(value: object) -> str:
+    if not isinstance(value, str):
+        return ""
+    url = html_lib.unescape(value).strip()
+    if url.startswith("//"):
+        url = f"https:{url}"
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return ""
+    return url
+
+
+def best_thumbnail_url(value: object) -> str:
+    if not isinstance(value, dict):
+        return ""
+    thumbnails = value.get("thumbnails")
+    if isinstance(thumbnails, list):
+        best = ""
+        best_area = -1
+        for item in thumbnails:
+            if not isinstance(item, dict):
+                continue
+            url = normalize_external_image_url(item.get("url"))
+            area = int(item.get("width") or 0) * int(item.get("height") or 0)
+            if url and area >= best_area:
+                best = url
+                best_area = area
+        if best:
+            return best
+    return normalize_external_image_url(value.get("url"))
+
+
 def browse_id_from_runs(value: object) -> str:
     if not isinstance(value, dict):
         return ""
@@ -1475,8 +1508,12 @@ def collect_channel_renderers(value: object, candidates: list[dict]) -> None:
             .get("browseId", "")
         )
         title = text_from_runs(renderer.get("title"))
+        avatar_url = best_thumbnail_url(renderer.get("thumbnail"))
         if isinstance(channel_id, str) and channel_id.startswith("UC") and title:
-            candidates.append({"channelId": channel_id, "title": title})
+            candidate = {"channelId": channel_id, "title": title}
+            if avatar_url:
+                candidate["avatarUrl"] = avatar_url
+            candidates.append(candidate)
 
     for child in value.values():
         collect_channel_renderers(child, candidates)
@@ -1571,15 +1608,20 @@ def save_channel_cache_unlocked(cache: dict) -> None:
 
 
 def get_cached_channel_identity(source: str) -> dict | None:
-    static_identity = get_static_channel_identity(source)
-    if static_identity:
-        return static_identity
-
     key = source_match_key(source)
     if not key:
         return None
     with CHANNEL_CACHE_LOCK:
         item = load_channel_cache_unlocked().get(key)
+
+    static_identity = get_static_channel_identity(source)
+    if static_identity:
+        if isinstance(item, dict):
+            avatar_url = normalize_external_image_url(item.get("avatarUrl"))
+            if avatar_url:
+                static_identity["avatarUrl"] = avatar_url
+        return static_identity
+
     if not isinstance(item, dict) or not str(item.get("channelId", "")).startswith("UC"):
         return None
     return item
@@ -1590,11 +1632,15 @@ def store_channel_identity(source: str, identity: dict) -> dict:
     channel_id = identity.get("channelId", "")
     if not key or not isinstance(channel_id, str) or not channel_id.startswith("UC"):
         return identity
-    clean = {
-        **build_channel_identity(source, identity.get("title") or source, channel_id),
-    }
     with CHANNEL_CACHE_LOCK:
         cache = load_channel_cache_unlocked()
+        existing = cache.get(key) if isinstance(cache.get(key), dict) else {}
+        avatar_url = normalize_external_image_url(identity.get("avatarUrl")) or normalize_external_image_url(existing.get("avatarUrl"))
+        clean = {
+            **build_channel_identity(source, identity.get("title") or source, channel_id),
+        }
+        if avatar_url:
+            clean["avatarUrl"] = avatar_url
         cache[key] = clean
         save_channel_cache_unlocked(cache)
     return clean
@@ -1636,6 +1682,49 @@ def trigger_channel_identity_resolution(source: str) -> None:
                 CHANNEL_RESOLVE_PENDING.discard(key)
 
     threading.Thread(target=run, name=f"clip-channel-resolve-{key[:24]}", daemon=True).start()
+
+
+def resolve_channel_avatar(source: str, fetch_missing: bool = True) -> str:
+    identity = get_cached_channel_identity(source)
+    avatar_url = normalize_external_image_url(identity.get("avatarUrl")) if identity else ""
+    if avatar_url or not fetch_missing:
+        return avatar_url
+
+    dom = load_youtube_search_dom_http(source)
+    candidates = extract_channel_candidates(dom)
+    if not candidates:
+        return ""
+
+    best = next(
+        (candidate for candidate in candidates if source_match(candidate.get("title", ""), source)),
+        candidates[0],
+    )
+    if not best.get("avatarUrl"):
+        return ""
+    return normalize_external_image_url(store_channel_identity(source, best).get("avatarUrl"))
+
+
+def trigger_channel_avatar_resolution(source: str) -> None:
+    key = source_match_key(source)
+    if not key:
+        return
+    if resolve_channel_avatar(source, fetch_missing=False):
+        return
+    with CHANNEL_CACHE_LOCK:
+        if key in CHANNEL_AVATAR_PENDING:
+            return
+        CHANNEL_AVATAR_PENDING.add(key)
+
+    def run() -> None:
+        try:
+            resolve_channel_avatar(source, fetch_missing=True)
+        except Exception as err:
+            print(f"Clip Mix channel avatar skipped for {source}: {err}")
+        finally:
+            with CHANNEL_CACHE_LOCK:
+                CHANNEL_AVATAR_PENDING.discard(key)
+
+    threading.Thread(target=run, name=f"clip-channel-avatar-{key[:24]}", daemon=True).start()
 
 
 def load_youtube_rss_candidates(source: str, resolve_missing: bool = False) -> list[dict]:
@@ -2543,6 +2632,33 @@ def fetch_human_link_leads(intent_key: str) -> tuple[list[dict], dict]:
     return selected, meta
 
 
+def channel_avatar_initials(source: str) -> str:
+    parts = re.findall(r"[A-Za-z0-9]+", source.upper())
+    initials = "".join(part[0] for part in parts[:2])
+    return initials or "CM"
+
+
+def channel_avatar_svg(source: str) -> bytes:
+    key = source_match_key(source) or "clip mix"
+    palettes = [
+        ("#15171b", "#f08cff"),
+        ("#10201f", "#20e6df"),
+        ("#1e1730", "#d886ff"),
+        ("#1f1f20", "#e7e7ee"),
+        ("#111827", "#9cc8ff"),
+        ("#211621", "#ffb4df"),
+    ]
+    background, foreground = palettes[sum(ord(char) for char in key) % len(palettes)]
+    initials = html_lib.escape(channel_avatar_initials(source))
+    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="{initials}">
+<rect width="160" height="160" rx="80" fill="{background}"/>
+<circle cx="118" cy="36" r="48" fill="{foreground}" fill-opacity=".13"/>
+<circle cx="42" cy="124" r="52" fill="{foreground}" fill-opacity=".08"/>
+<text x="50%" y="53%" text-anchor="middle" dominant-baseline="middle" fill="{foreground}" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800">{initials}</text>
+</svg>"""
+    return svg.encode("utf-8")
+
+
 class DashboardHandler(SimpleHTTPRequestHandler):
     def end_headers(self) -> None:
         self.send_header("X-Content-Type-Options", "nosniff")
@@ -2555,6 +2671,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/clip/prefetch":
             self.handle_clip_prefetch(parsed)
+            return
+        if parsed.path == "/api/clip/channel-avatar":
+            self.handle_clip_channel_avatar(parsed)
             return
         if parsed.path == "/api/openai/clip-tune":
             self.handle_openai_clip_tune(parsed)
@@ -2579,6 +2698,31 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def handle_clip_channel_avatar(self, parsed: urllib.parse.ParseResult) -> None:
+        params = urllib.parse.parse_qs(parsed.query)
+        source = (params.get("source", ["Clip Mix"])[0] or "Clip Mix").strip()[:80]
+        should_resolve = (params.get("resolve", ["0"])[0] or "0").lower() in {"1", "true", "yes"}
+        avatar_url = ""
+        try:
+            avatar_url = resolve_channel_avatar(source, fetch_missing=should_resolve)
+        except Exception as err:
+            print(f"Clip Mix avatar fallback for {source}: {err}")
+        if avatar_url:
+            self.send_response(HTTPStatus.FOUND)
+            self.send_header("Location", avatar_url)
+            self.send_header("Cache-Control", "public, max-age=86400")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+
+        body = channel_avatar_svg(source)
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "image/svg+xml; charset=utf-8")
+        self.send_header("Cache-Control", "public, max-age=600")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
